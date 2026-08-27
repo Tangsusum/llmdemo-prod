@@ -1,4 +1,4 @@
-from flask import request, jsonify, render_template
+from flask import request, jsonify, render_template, redirect
 from .config import log
 from .workflows import process_ctf_request
 
@@ -15,20 +15,23 @@ def setup_routes(app):
         log.info("%s %s %s", request.method, request.path, resp.status_code)
         return resp
 
-    @app.route("/menu")
-    def menu_ui():
-        return render_template("menu.html")
-
     @app.route("/")
     def index(): 
         return render_template("index.html")
 
-    @app.route("/ctf")
-    def ctf_ui(): 
+    @app.route("/game")
+    def game_ui():
         return render_template("ctf.html")
 
-    @app.route("/api/ctf", methods=["POST"])
-    def ctf_api():
+    @app.route("/menu")
+    def menu_ui():
+        return redirect("/game")
+
+    @app.route("/ctf")
+    def ctf_ui():
+        return redirect("/game")
+
+    def _game_api():
         try:
             data = request.get_json(silent=True)
             if data and 'msg' in data:
@@ -44,3 +47,11 @@ def setup_routes(app):
             return jsonify(answer=result, challenge_completed=False)
         else:
             return jsonify(result)
+
+    @app.route("/api/game", methods=["POST"])
+    def game_api():
+        return _game_api()
+
+    @app.route("/api/ctf", methods=["POST"])
+    def ctf_api():
+        return _game_api()

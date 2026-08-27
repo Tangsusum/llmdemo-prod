@@ -1,0 +1,15 @@
+services:
+  datadog-agent:
+    image: gcr.io/datadoghq/agent:7
+    container_name: datadog-agent-local
+    environment:
+      - DD_API_KEY=${DD_API_KEY}
+      - DD_SITE=${DD_SITE:-datadoghq.com}
+      - DD_HOSTNAME=hanoi-coffee-guardrail-local
+      - DD_APM_ENABLED=true
+      - DD_APM_NON_LOCAL_TRAFFIC=true
+      - DD_LOGS_ENABLED=false
+      - DD_PROCESS_AGENT_ENABLED=false
+    ports:
+      - "18126:8126"
+    restart: unless-stopped

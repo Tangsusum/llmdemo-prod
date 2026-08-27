@@ -5,8 +5,8 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     DD_LLMOBS_ENABLED=1 \
-    DD_LLMOBS_ML_APP=llm-play-app \
-    DD_SERVICE=llm-play-app \
+    DD_LLMOBS_ML_APP=hanoi-coffee-guardrail \
+    DD_SERVICE=hanoi-coffee-guardrail \
     DD_LLMOBS_AGENTLESS_ENABLED=false \
     DD_ENV=local \
     DD_TRACE_ENABLED=true \
