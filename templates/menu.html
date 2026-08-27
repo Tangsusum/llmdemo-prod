@@ -127,9 +127,9 @@
     
     .menu-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr;
       gap: 2rem;
-      max-width: 800px;
+      max-width: 420px;
       margin: 0 auto;
       margin-top: 2rem;
     }
@@ -198,10 +198,7 @@
       margin: 0;
     }
     
-    .menu-item.playground { --accent: var(--primary-gradient); }
     .menu-item.ctf { --accent: var(--warning-gradient); }
-    .menu-item.security { --accent: var(--secondary-gradient); }
-    .menu-item.confidence { --accent: var(--success-gradient); }
     
     /* Back Button Styles */
     .back-button {
@@ -240,10 +237,7 @@
       transform: translateX(-3px);
     }
     
-    .menu-item.playground:before { background: var(--primary-gradient); }
     .menu-item.ctf:before { background: var(--warning-gradient); }
-    .menu-item.security:before { background: var(--secondary-gradient); }
-    .menu-item.confidence:before { background: var(--success-gradient); }
     
     .status-bar {
       display: flex;
@@ -322,15 +316,9 @@
 
     <div class="menu-grid">
       <a href="/ctf" class="menu-item ctf">
-        <div class="menu-icon">🐕</div>
+        <div class="menu-icon">☕</div>
         <div class="menu-title">Guardrail CTF</div>
         <p class="menu-description">Challenge AI safety measures in this capture-the-flag style game</p>
-      </a>
-      
-      <a href="/business" class="menu-item confidence" onclick="navigateToBusinessChat(event)">
-        <div class="menu-icon">🤖</div>
-        <div class="menu-title">TechBot Assistant</div>
-        <p class="menu-description">Internal AI assistant for TechShop Inc. employees with security challenges</p>
       </a>
 
     </div>
@@ -340,7 +328,7 @@
         <div class="status-dot"></div>
         <span>System Online</span>
       </div>
-      <div>2 Experiences Available</div>
+      <div>1 Experience Available</div>
       <div id="currentTime"></div>
     </div>
   </div>
@@ -417,17 +405,6 @@
       }
     `;
     document.head.appendChild(style);
-
-    // Navigate to business chat with user context
-    function navigateToBusinessChat(event) {
-      event.preventDefault();
-      
-      // Get username from session storage
-      const userName = sessionStorage.getItem("user_name") || "anonymous";
-      
-      // Navigate to business page with user parameter
-      window.location.href = `/business?user=${encodeURIComponent(userName)}`;
-    }
   </script>
 </body>
 </html>

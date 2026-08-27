@@ -40,9 +40,6 @@ COPY static/ static/
 # Copy any additional configuration files
 COPY *.yml *.yaml *.json *.env* ./
 
-# Create directory for SQLite database (optional - SQLite will create if needed)
-RUN mkdir -p data
-
 # Expose the Flask/Gunicorn port
 EXPOSE 5000
 

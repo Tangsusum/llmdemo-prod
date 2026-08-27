@@ -29,7 +29,6 @@ mkdir -p "$RESULTS_DIR"
 declare -a ENDPOINTS=(
     "/"
     "/menu"
-    "/business"
     "/ctf"
     "/static/style.css"
 )
