@@ -1,0 +1,32 @@
+# VN market override for the Vietnam deployment (vn.dd-demo-sg-llm.com).
+#
+# Usage (always layered on top of the backend compose file):
+#   docker compose -f docker-compose-backend.yml -f docker-compose.vn.yml up -d
+#
+# Keeps VN telemetry in its own Datadog service so it never merges with the
+# Singapore prod fleet, which reports as `hanoi-coffee-guardrail`.
+services:
+  app:
+    container_name: llm-vn-app
+    environment:
+      - DD_SERVICE=hanoi-coffee-guardrail-vn
+      - DD_ENV=vn-production
+      - DD_LLMOBS_ML_APP=hanoi-coffee-guardrail-vn
+
+    # /menu now 302-redirects to /game, so probe /game directly.
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/game"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  datadog:
+    container_name: datadog-vn
+    environment:
+      - DD_ENV=vn-production
+      - DD_TAGS=market:vn
+
+networks:
+  default:
+    name: llm-vn-network
