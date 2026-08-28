@@ -48,8 +48,15 @@ die()   { fail "$*"; exit 1; }
 
 # Strip the boilerplate gcloud prints on every invocation in this environment.
 gc() {
+  # NOTE: a pipeline returns the LAST command's status, and `grep -v` exits 1
+  # when it filters everything out. A silent-but-successful gcloud call would
+  # otherwise look like a failure, so propagate gcloud's own status via
+  # PIPESTATUS instead of the grep's.
+  local st
   gcloud "$@" 2>&1 | grep -v -iE \
     '^WARNING:|reinstall gcloud|components reinstall|Python 3\.9|CLOUDSDK_PYTHON|compatible version of Python|compatible Python interpreter|prompt to install|will also prompt|global DNS|zonal-dns|increase the performance of the tunnel|please see https://cloud.google.com/iap|^ *\$ gcloud|^$'
+  st=${PIPESTATUS[0]}
+  return "$st"
 }
 
 # Run a command on a VM over the IAP tunnel. SSH from arbitrary IPs is blocked
