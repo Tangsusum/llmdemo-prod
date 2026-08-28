@@ -13,6 +13,14 @@
        d=o.createElement(u);d.async=1;d.src=n
        n=o.getElementsByTagName(u)[0];n.parentNode.insertBefore(d,n)
     })(window,document,'script','https://www.datadoghq-browser-agent.com/us1/v5/datadog-rum.js','DD_RUM')
+
+    window.isDatadogSynthetics = function () {
+      try {
+        if (window._DATADOG_SYNTHETICS) return true;
+        if (navigator.userAgent && /DatadogSynthetics/i.test(navigator.userAgent)) return true;
+      } catch (e) {}
+      return false;
+    };
     
     window.DD_RUM.onReady(function() {
       window.DD_RUM.init({
@@ -51,7 +59,8 @@
           name: userName,
           page: 'welcome',
           session_type: 'demo',
-          entry_point: 'index'
+          entry_point: 'index',
+          traffic: window.isDatadogSynthetics() ? 'synthetics' : 'user'
         });
       }
       
@@ -60,6 +69,15 @@
       
       // Update user context when storage changes
       window.addEventListener('storage', setRUMUserContext);
+
+      try {
+        window.DD_RUM.addAction('demo_entered', {
+          page: 'welcome',
+          entry_point: 'index'
+        });
+      } catch (rumError) {
+        console.warn("RUM tracking error (non-critical):", rumError);
+      }
     });
   </script>
   <style>
@@ -193,7 +211,7 @@
       >
     </div>
     
-    <button class="start-button" onclick="startDemo()">
+    <button class="start-button" data-dd-action-name="demo_start_journey" onclick="startDemo()">
       🎯 Start Your Journey
     </button>
   </div>
@@ -248,6 +266,24 @@
       
       // Save name and redirect
       sessionStorage.setItem("user_name", name);
+      try {
+        if (window.DD_RUM) {
+          window.DD_RUM.setUser({
+            id: name,
+            name: name,
+            page: 'welcome',
+            session_type: 'demo',
+            entry_point: 'index',
+            traffic: window.isDatadogSynthetics() ? 'synthetics' : 'user'
+          });
+          window.DD_RUM.addAction('demo_start_journey', {
+            user_name: name,
+            page: 'welcome'
+          });
+        }
+      } catch (rumError) {
+        console.warn("RUM tracking error (non-critical):", rumError);
+      }
       
       setTimeout(() => {
         window.location.href = "/game";

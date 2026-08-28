@@ -1,131 +1,138 @@
-# 🏆 RUM CTF Winner Tracking Queries
+# RUM + Journey Monitoring — Hanoi Coffee Guardrail
 
-## Custom RUM Events Added
+RUM app ID: `95ad2a6f-23d2-4f1b-8e44-46f0570d49a4`  
+Service: `hanoi-coffee-guardrail`  
+Dashboard: https://bang.datadoghq.com/dashboard/n4m-52n-kwr
 
-### 1. CTF Challenge Winners
-**Event**: `ctf_challenge_won`
-**Attributes**:
-- `winner`: Username who completed the challenge
-- `challenge_type`: 'guardrail_ctf'
-- `challenge_name`: 'Pet Recommendation Bypass'
-- `user_message`: The winning prompt (first 200 chars)
-- `confidence`: LLM judge confidence score
-- `reasoning`: Why it was considered a win
-- `completion_time`: ISO timestamp
-- `session_id`: RUM session ID
+Journey Monitoring is Preview (no create-journey API). After demo traffic lands, create journeys in **Digital Experience → Journey Monitoring → New Journey**.
 
-### 2. Security Challenge Winners  
-**Event**: `security_challenge_won`
-**Attributes**:
-- `winner`: Username who completed the challenge
-- `challenge_type`: 'data_exfiltration'
-- `challenge_name`: 'Extract Admin Email'
-- `user_message`: The winning prompt
-- `extracted_data`: 'admin_email'
-- `completion_time`: ISO timestamp
+## Journey recipes
 
-### 3. Failed Attempts
-**Event**: `ctf_challenge_attempt`
-**Attributes**:
-- `participant`: Username who attempted
-- `success`: false
-- `user_message`: The attempted prompt
-- `confidence`: LLM judge confidence
-- `attempt_time`: ISO timestamp
+Journeys **chain** when the next journey’s start is the previous journey’s end. Brew the Drink floated because it started at `quiz_started`.
 
-## 📊 Datadog Dashboard Queries
+A win is always sữa đá. Trứng is the hold path. The map is a **Y**:
 
-### Find All CTF Winners
 ```
-@type:action @action.name:ctf_challenge_won
+/game → Win the Guardrail → Brew sữa đá
+     → Guardrail held     → Brew trứng
 ```
 
-### Find All Security Winners
+Frontend: **hanoi-coffee-guardrail**. Edit/replace the two existing journeys.
+
+### 1. Win the Guardrail
+
+- Start: view `/game`
+- End: action `ctf_challenge_won`
+- Variant: `/game` → `ctf_challenge_attempt` → `/game/result/sua-da` → `ctf_challenge_won`
+
+Do **not** add the egg quiz as a second end here, or conversion stops meaning “broke the guardrail.”
+
+### 2. Brew sữa đá (chains off a win)
+
+- Start: action `ctf_challenge_won`
+- End: view `/game/quiz/sua-da/complete`
+- Variant: `ctf_challenge_won` → `quiz_started` → `/game/quiz/sua-da/opening` → `step-1` … `step-5` → `/game/quiz/sua-da/complete`
+
+### 3. Guardrail held
+
+- Start: view `/game`
+- End: action `ctf_challenge_held`
+- Variant: `/game` → `ctf_challenge_attempt` → `/game/result/trung` → `ctf_challenge_held`
+
+### 4. Brew trứng (chains off a hold)
+
+- Start: action `ctf_challenge_held`
+- End: view `/game/quiz/trung/complete`
+- Variant: `ctf_challenge_held` → `quiz_started` → `/game/quiz/trung/opening` → `step-1` … `step-5` → `/game/quiz/trung/complete`
+
+After saving, run two human sessions: Egg Allergy → milk quiz, then Start Simple → egg quiz. On the MAP, **Brew sữa đá** should sit after **Win the Guardrail**, and **Brew trứng** after **Guardrail held**.
+
+Optional: **Enter the cafe** — view `/` → view `/game` — so the Y hangs off session start.
+
+If Journey Monitoring is not enabled, request access: https://www.datadoghq.com/product-preview/journey-monitoring/
+
+Dashboard funnels still show conversion without a saved journey.
+
+## Synthetics vs real winners
+
+A **Synthetic browser test** is useful for Journey Monitoring **uptime** (each journey gets a test suite). It should not appear on the showcase winner board.
+
+- Dashboard RUM widgets filter `@session.type:user`.
+- The app does not fire `ctf_challenge_won` when it detects Datadog Synthetics (`window._DATADOG_SYNTHETICS` or `DatadogSynthetics` user agent).
+- API spans from synthetics are tagged `traffic:synthetics` so LLMObs win widgets can use `-@traffic:synthetics`.
+
+Suggested browser test (Digital Experience → Synthetics → New Test):
+
+1. Go to `/`
+2. Type a name (for example `synthetics`)
+3. Click **Start Your Journey**
+4. On `/game`, click **Egg Allergy** then **Attempt Challenge**
+5. Optionally open the quiz CTA so the journey stays green
+
+Leave RUM collection on if you want Journey Monitoring to see the synthetic path; winner widgets still ignore it. Attach the test to the journey's test suite for uptime.
+
+## Custom RUM events
+
+### Landing
+
+- `demo_entered` — welcome page loaded
+- `demo_start_journey` — name submitted (button or Enter). Also `data-dd-action-name="demo_start_journey"` on the CTA.
+
+### Challenge
+
+- `ctf_challenge_attempt` — every submit (`success` true/false, `verdict`)
+- `ctf_challenge_won` — additional action when iced milk coffee is recommended (`valid_break`)
+- Click on the challenge button uses `data-dd-action-name="attempt_challenge"` (VI/EN-safe)
+
+### Quiz
+
+- `quiz_cta_shown`, `quiz_started`, `quiz_step_answered`, `quiz_completed`
+- Views: `/game/quiz/{sua-da|trung}/opening` / `step-1`…`step-5` / `complete`
+- After an AI answer: view `/game/result/sua-da` or `/game/result/trung`
+
+### Winner action attributes
+
+- `winner`, `challenge_type`, `challenge_name`, `verdict`, `user_message`, `confidence`, `reasoning`, `completion_time`, `session_id`
+
+## Dashboard and Explorer queries
+
+Filter every query with `@application.id:95ad2a6f-23d2-4f1b-8e44-46f0570d49a4 @session.type:user`.
+
+### Winners
+
 ```
-@type:action @action.name:security_challenge_won
+@type:action @action.type:custom @action.name:ctf_challenge_won @session.type:user
 ```
 
-### Leaderboard Query (First to Win)
+### Attempts vs wins
+
 ```
-@type:action @action.name:(ctf_challenge_won OR security_challenge_won) | sort @action.completion_time asc
+@type:action @action.type:custom @action.name:ctf_challenge_attempt
 ```
 
-### Success Rate Analysis
+### Quiz conversion
+
 ```
-@type:action @action.name:ctf_challenge_attempt | stats count by @action.success
+@type:action @action.type:custom @action.name:quiz_started
+@type:action @action.type:custom @action.name:quiz_completed
 ```
 
-### Winner Timeline
+### Winners with Session Replay
+
 ```
-@type:action @action.name:ctf_challenge_won | timeseries count by @action.winner
+@type:action @action.type:custom @action.name:ctf_challenge_won @session.has_replay:true
 ```
 
-### Most Creative Winning Prompts
-```
-@type:action @action.name:ctf_challenge_won | sort @action.confidence desc
-```
+### User attributes after a win
 
-## 🎯 User Attributes for Filtering
-
-### CTF Winners
+- `@usr.name`
 - `@user.ctf_winner:true`
 - `@user.ctf_status:winner`
 
-### Security Winners  
-- `@user.security_winner:true`
-- `@user.security_status:winner`
+## LLM Observability
 
-## 📈 Example Dashboard Widgets
-
-### 1. Winner Count Widget
-**Query**: `@type:action @action.name:(ctf_challenge_won OR security_challenge_won)`
-**Visualization**: Single Value
-**Aggregation**: Count
-
-### 2. Winners Over Time
-**Query**: `@type:action @action.name:ctf_challenge_won`
-**Visualization**: Timeseries
-**Group by**: `@action.winner`
-
-### 3. Challenge Success Rate
-**Query**: `@type:action @action.name:ctf_challenge_attempt`
-**Visualization**: Pie Chart
-**Group by**: `@action.success`
-
-### 4. Top Winners Table
-**Query**: `@type:action @action.name:(ctf_challenge_won OR security_challenge_won)`
-**Visualization**: Table
-**Group by**: `@action.winner`
-**Columns**: Count, Latest completion time
-
-## 🔍 Advanced Queries
-
-### Find Users Who Won Both Challenges
 ```
-@user.ctf_winner:true @user.security_winner:true
+@ml_app:hanoi-coffee-guardrail @name:process_ctf_request
+@ml_app:hanoi-coffee-guardrail @name:process_ctf_request ctf.challenge_status:completed
+@ml_app:hanoi-coffee-guardrail @name:process_ctf_request ctf.challenge_status:failed
 ```
-
-### Fastest Winners (< 5 minutes from page load)
-```
-@type:action @action.name:ctf_challenge_won @duration:<300000
-```
-
-### Most Persistent Users (Multiple Attempts)
-```
-@type:action @action.name:ctf_challenge_attempt | stats count by @action.participant | sort count desc
-```
-
-## 🎮 Real-Time Monitoring
-
-### Live Winner Feed
-Create a log stream with:
-```
-@type:action @action.name:(ctf_challenge_won OR security_challenge_won)
-```
-
-### Challenge Activity Monitor
-```
-@type:action @action.name:(ctf_challenge_won OR ctf_challenge_attempt OR security_challenge_won)
-```
-
-This gives you complete visibility into who's winning your CTF challenges and how they're doing it! 🏆

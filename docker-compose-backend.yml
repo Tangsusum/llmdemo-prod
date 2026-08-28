@@ -25,9 +25,11 @@ services:
       - DD_APPSEC_ENABLED=true
       - DD_APPSEC_WAF_TIMEOUT=10000
       
-      # AI Guard Configuration (now managed via Eppo feature flags)
+      # AI Guard: monitor-only. Do not block the live game.
       - DD_API_KEY=${DD_API_KEY}
       - DD_APP_KEY=${DD_APP_KEY}
+      - DD_AI_GUARD_ENABLED=${DD_AI_GUARD_ENABLED:-true}
+      - DD_AI_GUARD_BLOCK=false
       
       # Eppo Feature Flag Configuration (controls AI Guard dynamically)
       - EPPO_API_KEY=${EPPO_API_KEY}

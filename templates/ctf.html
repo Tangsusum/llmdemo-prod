@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hanoi Coffee Guardrail</title>
   <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/quiz.css">
   
   <!-- Datadog RUM CDN Async -->
   <script>
@@ -13,6 +14,14 @@
        d=o.createElement(u);d.async=1;d.src=n
        n=o.getElementsByTagName(u)[0];n.parentNode.insertBefore(d,n)
     })(window,document,'script','https://www.datadoghq-browser-agent.com/us1/v5/datadog-rum.js','DD_RUM')
+
+    window.isDatadogSynthetics = function () {
+      try {
+        if (window._DATADOG_SYNTHETICS) return true;
+        if (navigator.userAgent && /DatadogSynthetics/i.test(navigator.userAgent)) return true;
+      } catch (e) {}
+      return false;
+    };
     
     window.DD_RUM.onReady(function() {
       window.DD_RUM.init({
@@ -52,7 +61,8 @@
           page: 'ctf',
           session_type: 'demo',
           current_page: 'ctf',
-          challenge_type: 'guardrail_ctf'
+          challenge_type: 'guardrail_ctf',
+          traffic: window.isDatadogSynthetics() ? 'synthetics' : 'user'
         });
       }
       
@@ -79,73 +89,34 @@
     }
     
     .ctf-header {
-      background: linear-gradient(135deg, #FFF5E5 0%, #F6E7CE 55%, #F0D6B8 100%);
-      color: var(--heading);
-      padding: 3rem 2rem;
+      padding: 0;
       border-radius: 24px;
       margin-bottom: 3rem;
-      text-align: center;
       position: relative;
       overflow: hidden;
       box-shadow: var(--shadow-card);
       border: 1px solid var(--border-light);
-    }
-    
-    .ctf-header:before,
-    .ctf-header:after {
-      content: '';
-      position: absolute;
-      border-radius: 50%;
-      background: #F3E3CD;
-      pointer-events: none;
-    }
-    
-    .ctf-header:before {
-      width: 220px;
-      height: 220px;
-      top: -80px;
-      left: -60px;
-      opacity: 0.7;
-    }
-    
-    .ctf-header:after {
-      width: 180px;
-      height: 180px;
-      right: -40px;
-      bottom: -50px;
-      opacity: 0.65;
-    }
-    
-    .ctf-icon {
-      font-size: 4rem;
-      margin-bottom: 1rem;
-      position: relative;
-      z-index: 1;
-    }
-    
-    .ctf-title {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      position: relative;
-      z-index: 1;
-      color: var(--heading);
-      font-weight: 700;
-    }
-    
-    .ctf-subtitle {
-      font-size: 1.2rem;
-      color: var(--brand-orange-hover);
-      position: relative;
-      z-index: 1;
-      font-weight: 600;
+      background: #f4ead9;
+      line-height: 0;
     }
 
-    .hero-welcome {
-      margin-top: 0.85rem;
-      font-size: 0.95rem;
-      color: var(--text-secondary);
-      position: relative;
-      z-index: 1;
+    .ctf-banner {
+      width: 100%;
+      height: auto;
+      display: block;
+      vertical-align: middle;
+    }
+
+    .ctf-header .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
 
     .lang-toggle {
@@ -689,12 +660,8 @@
       }
       
       .ctf-header {
-        padding: 2rem 1.5rem;
         margin-bottom: 2rem;
-      }
-      
-      .ctf-title {
-        font-size: 2rem;
+        border-radius: 16px;
       }
       
       .quick-prompts-section {
@@ -732,10 +699,14 @@
     </div>
 
     <div class="ctf-header">
-      <div class="ctf-icon">☕</div>
-      <h1 class="ctf-title" data-i18n="heroTitle">Hanoi Coffee Guardrail</h1>
-      <p class="ctf-subtitle" data-i18n="heroSubtitle">Khiến AI đổi gợi ý</p>
-      <p class="hero-welcome" data-i18n="heroWelcome">Bạn có thể dùng tiếng Việt hoặc tiếng Anh.</p>
+      <h1 class="sr-only" data-i18n="heroTitle">Hanoi Coffee Guardrail</h1>
+      <img
+        class="ctf-banner"
+        src="/static/quiz_img/banner.png"
+        alt="Hanoi Coffee Guardrail"
+        width="1774"
+        height="887"
+      >
     </div>
     
     <div class="challenge-brief">
@@ -790,7 +761,7 @@
           ></textarea>
         </div>
         
-        <button class="challenge-button" onclick="attemptChallenge()">
+        <button class="challenge-button" data-dd-action-name="attempt_challenge" onclick="attemptChallenge()">
           <span data-i18n="cta">🚀 Thử thách ngay</span>
         </button>
         <p class="cta-hint" data-i18n="ctaHint">AI chỉ được chọn một: cà phê trứng hoặc cà phê sữa đá.</p>
@@ -833,6 +804,8 @@
     </div>
   </div>
 
+  <div id="quiz-root" hidden></div>
+  <script src="/static/quiz.js"></script>
   <script>
     const I18N = {
       vi: {
@@ -882,7 +855,13 @@
         resultTitleClarify: 'Cần thêm một chi tiết',
         judgeLabel: 'Đánh giá',
         errorTitle: 'Thử thách gặp lỗi hệ thống',
-        errorBody: 'Vui lòng thử lại. Kiểm tra console trình duyệt để biết chi tiết.'
+        errorBody: 'Vui lòng thử lại. Kiểm tra console trình duyệt để biết chi tiết.',
+        quizMilkHeadline: 'AI đã chọn cà phê sữa đá.',
+        quizMilkKicker: 'Thử pha một ly được không?',
+        quizMilkButton: 'PHA CÀ PHÊ SỮA ĐÁ →',
+        quizEggHeadline: 'AI vẫn chọn cà phê trứng.',
+        quizEggKicker: 'Giờ thì tới cà phê trứng.',
+        quizEggButton: 'BẮT ĐẦU — CRACK ON →'
       },
       en: {
         pageTitle: 'Hanoi Coffee Guardrail',
@@ -931,7 +910,13 @@
         resultTitleClarify: 'One more detail may be needed',
         judgeLabel: 'Judge evaluation',
         errorTitle: 'Challenge failed due to a system error',
-        errorBody: 'Please try again. Check the browser console for details.'
+        errorBody: 'Please try again. Check the browser console for details.',
+        quizMilkHeadline: 'The AI picked cà phê sữa đá.',
+        quizMilkKicker: 'Think you can brew it?',
+        quizMilkButton: 'MAKE A CÀ PHÊ SỮA ĐÁ →',
+        quizEggHeadline: 'The AI is sticking with cà phê trứng.',
+        quizEggKicker: 'Things are getting eggy.',
+        quizEggButton: 'CRACK ON →'
       }
     };
 
@@ -978,6 +963,9 @@
 
       challengeInput.placeholder = copy.placeholder;
       renderLastView();
+      if (window.QuizGame && window.QuizGame.isOpen()) {
+        window.QuizGame.rerender();
+      }
     }
 
     function hideResultChip() {
@@ -1060,6 +1048,12 @@
         .replace(/>/g, '&gt;');
     }
 
+    function drinkFromVerdict(verdict) {
+      if (verdict === 'valid_break' || verdict === 'agent_failure') return 'sua-da';
+      if (verdict === 'guardrail_held') return 'trung';
+      return null;
+    }
+
     function renderResult(result, verdict, celebrate) {
       const titles = {
         valid_break: { title: t('resultTitleValid'), subtitle: t('resultSubtitleValid'), cls: 'is-success' },
@@ -1068,31 +1062,66 @@
         needs_clarification: { title: t('resultTitleClarify'), subtitle: '', cls: '' }
       };
       const view = titles[verdict] || titles.guardrail_held;
+      const drink = drinkFromVerdict(verdict);
 
       showResultChip(verdict);
-      responseOutput.className = 'response-output ' + view.cls;
+      responseOutput.className = 'response-output ' + (drink ? 'is-celebrate has-quiz-cta' : view.cls);
+
+      try {
+        if (window.DD_RUM && window.DD_RUM.startView) {
+          window.DD_RUM.startView({
+            name: drink ? '/game/result/' + drink : '/game/result/other'
+          });
+        }
+      } catch (rumError) {
+        console.warn("RUM tracking error (non-critical):", rumError);
+      }
+
+      if (drink) {
+        const img = drink === 'sua-da'
+          ? '/static/quiz_img/milkcoffee_6.png'
+          : '/static/quiz_img/eggcoffee_6.png';
+        const headline = t(drink === 'sua-da' ? 'quizMilkHeadline' : 'quizEggHeadline');
+        const kicker = t(drink === 'sua-da' ? 'quizMilkKicker' : 'quizEggKicker');
+        const button = t(drink === 'sua-da' ? 'quizMilkButton' : 'quizEggButton');
+        responseOutput.innerHTML =
+          '<div class="result-celebrate" aria-hidden="true"></div>' +
+          '<img class="result-drink-art" src="' + img + '" alt="">' +
+          '<div class="response-hero-copy">' +
+            '<div class="response-title">' + view.title + '</div>' +
+            '<div class="response-subtitle">' + headline + '</div>' +
+            (view.subtitle ? '<div class="response-subtitle">' + view.subtitle + '</div>' : '') +
+          '</div>' +
+          '<div class="response-answer-quote">' + escapeHtml(result.answer || '') + '</div>' +
+          '<button type="button" class="quiz-launch-cta" data-quiz-id="' + drink + '" data-dd-action-name="quiz_cta_' + drink + '">' +
+            '<span class="quiz-launch-kicker">' + kicker + '</span>' +
+            '<span class="quiz-launch-label">' + button + '</span>' +
+          '</button>';
+        const cta = responseOutput.querySelector('.quiz-launch-cta');
+        cta.addEventListener('click', function () {
+          if (window.QuizGame) {
+            window.QuizGame.launch(drink, {
+              onClose: function () {
+                challengeInput.focus();
+              }
+            });
+          }
+        });
+        if (celebrate) {
+          if (window.QuizGame) window.QuizGame.playCelebration(responseOutput);
+          try {
+            window.DD_RUM && window.DD_RUM.addAction('quiz_cta_shown', { quiz: drink });
+          } catch (rumError) {
+            console.warn("RUM tracking error (non-critical):", rumError);
+          }
+        }
+        return;
+      }
+
       responseOutput.innerHTML =
         '<div class="response-title">' + view.title + '</div>' +
         (view.subtitle ? '<div class="response-subtitle">' + view.subtitle + '</div>' : '') +
         '<div>' + escapeHtml(result.answer || '') + '</div>';
-
-      if (celebrate) {
-        playCelebration();
-      }
-    }
-
-    function playCelebration() {
-      const celebration = document.createElement('div');
-      celebration.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10000;font-size:2rem;animation:celebration 3s ease-out;';
-      celebration.innerHTML = '🎉'.repeat(20);
-      const style = document.createElement('style');
-      style.textContent = '@keyframes celebration{0%{opacity:0;transform:translateY(100vh)}50%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-100vh)}}';
-      document.head.appendChild(style);
-      document.body.appendChild(celebration);
-      setTimeout(function() {
-        celebration.remove();
-        style.remove();
-      }, 3000);
     }
 
     challengeInput.addEventListener('input', function() {
@@ -1125,9 +1154,28 @@
         const evaluation = result.evaluation || { reasoning: "No evaluation available", confidence: 0 };
         const verdict = classifyVerdict(result);
         const challengeSuccess = verdict === 'valid_break';
+        const drink = drinkFromVerdict(verdict);
         lastView = { type: 'result', result: result, verdict: verdict };
 
-        if (challengeSuccess) {
+        try {
+          window.DD_RUM && window.DD_RUM.addAction('ctf_challenge_attempt', {
+            participant: userName,
+            challenge_type: 'guardrail_ctf',
+            challenge_name: 'Hanoi Coffee Guardrail',
+            verdict: verdict,
+            user_message: message.substring(0, 200),
+            success: challengeSuccess,
+            confidence: evaluation.confidence,
+            reasoning: String(evaluation.reasoning || '').substring(0, 300),
+            attempt_time: new Date().toISOString()
+          });
+        } catch (rumError) {
+          console.warn("RUM tracking error (non-critical):", rumError);
+        }
+
+        renderResult(result, verdict, !!drink);
+
+        if (challengeSuccess && !window.isDatadogSynthetics()) {
           const timestamp = new Date().toISOString();
           try {
             window.DD_RUM && window.DD_RUM.addAction('ctf_challenge_won', {
@@ -1148,30 +1196,26 @@
               ctf_winner: true,
               ctf_completion_time: timestamp,
               ctf_status: 'winner',
-              ctf_win_time: timestamp
+              ctf_win_time: timestamp,
+              traffic: 'user'
             });
           } catch (rumError) {
             console.warn("RUM tracking error (non-critical):", rumError);
           }
-          renderResult(result, verdict, true);
-        } else {
+        } else if (verdict === 'guardrail_held') {
           try {
-            window.DD_RUM && window.DD_RUM.addAction('ctf_challenge_attempt', {
+            window.DD_RUM && window.DD_RUM.addAction('ctf_challenge_held', {
               participant: userName,
               challenge_type: 'guardrail_ctf',
               challenge_name: 'Hanoi Coffee Guardrail',
               verdict: verdict,
-              user_message: message.substring(0, 200),
-              success: false,
-              confidence: evaluation.confidence,
-              reasoning: String(evaluation.reasoning || '').substring(0, 300),
-              attempt_time: new Date().toISOString()
+              quiz: 'trung'
             });
           } catch (rumError) {
             console.warn("RUM tracking error (non-critical):", rumError);
           }
-          renderResult(result, verdict, false);
         }
+        document.querySelector('.results-section').scrollIntoView({ behavior: 'smooth', block: 'center' });
       } catch (error) {
         console.error("CTF Challenge Error:", error);
         lastView = { type: 'error', message: error.message };
