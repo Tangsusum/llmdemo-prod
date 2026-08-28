@@ -13,8 +13,8 @@ Journeys **chain** when the next journey’s start is the previous journey’s e
 A win is always sữa đá. Trứng is the hold path. The map is a **Y**:
 
 ```
-/game → Win the Guardrail → Brew sữa đá
-     → Guardrail held     → Brew trứng
+/game → Win the Guardrail → /quiz/sua-da
+     → Guardrail held     → /quiz/trung
 ```
 
 Frontend: **hanoi-coffee-guardrail**. Edit/replace the two existing journeys.
@@ -30,8 +30,8 @@ Do **not** add the egg quiz as a second end here, or conversion stops meaning �
 ### 2. Brew sữa đá (chains off a win)
 
 - Start: action `ctf_challenge_won`
-- End: view `/game/quiz/sua-da/complete`
-- Variant: `ctf_challenge_won` → `quiz_started` → `/game/quiz/sua-da/opening` → `step-1` … `step-5` → `/game/quiz/sua-da/complete`
+- End: view `/quiz/sua-da/complete`
+- Variant: `ctf_challenge_won` → `quiz_started` → `/quiz/sua-da/opening` → `step-1` … `step-5` → `/quiz/sua-da/complete`
 
 ### 3. Guardrail held
 
@@ -42,8 +42,8 @@ Do **not** add the egg quiz as a second end here, or conversion stops meaning �
 ### 4. Brew trứng (chains off a hold)
 
 - Start: action `ctf_challenge_held`
-- End: view `/game/quiz/trung/complete`
-- Variant: `ctf_challenge_held` → `quiz_started` → `/game/quiz/trung/opening` → `step-1` … `step-5` → `/game/quiz/trung/complete`
+- End: view `/quiz/trung/complete`
+- Variant: `ctf_challenge_held` → `quiz_started` → `/quiz/trung/opening` → `step-1` … `step-5` → `/quiz/trung/complete`
 
 After saving, run two human sessions: Egg Allergy → milk quiz, then Start Simple → egg quiz. On the MAP, **Brew sữa đá** should sit after **Win the Guardrail**, and **Brew trứng** after **Guardrail held**.
 
@@ -65,9 +65,9 @@ Suggested browser test (Digital Experience → Synthetics → New Test):
 
 1. Go to `/`
 2. Type a name (for example `synthetics`)
-3. Click **Start Your Journey**
+3. Click **Start your journey** / **Bắt đầu hành trình**
 4. On `/game`, click **Egg Allergy** then **Attempt Challenge**
-5. Optionally open the quiz CTA so the journey stays green
+5. Click the brew CTA so the browser navigates to `/quiz/sua-da`
 
 Leave RUM collection on if you want Journey Monitoring to see the synthetic path; winner widgets still ignore it. Attach the test to the journey's test suite for uptime.
 
@@ -87,7 +87,8 @@ Leave RUM collection on if you want Journey Monitoring to see the synthetic path
 ### Quiz
 
 - `quiz_cta_shown`, `quiz_started`, `quiz_step_answered`, `quiz_completed`
-- Views: `/game/quiz/{sua-da|trung}/opening` / `step-1`…`step-5` / `complete`
+- Real pages: `/quiz/sua-da` and `/quiz/trung` (full navigation off `/game`)
+- Views: `/quiz/{sua-da|trung}/opening` / `step-1`…`step-5` / `complete`
 - After an AI answer: view `/game/result/sua-da` or `/game/result/trung`
 
 ### Winner action attributes

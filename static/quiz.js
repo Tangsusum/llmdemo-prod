@@ -7,7 +7,8 @@
     tryAnother: { en: "TRY ANOTHER", vi: "THỬ CÁI KHÁC" },
     guessAgain: { en: "GUESS AGAIN", vi: "ĐOÁN LẠI" },
     bloom: { en: "…blooming…", vi: "…đang nở…" },
-    close: { en: "Close quiz", vi: "Đóng quiz" },
+    close: { en: "Return to game", vi: "Quay lại thử thách" },
+    returnToGame: { en: "Return to game", vi: "Quay lại thử thách" },
     notQuite: { en: "NOT QUITE!", vi: "CHƯA ỔN!" },
     tryAnotherBody: { en: "Try another.", vi: "Thử nguyên liệu khác." },
     quizLabel: { en: "Coffee quiz", vi: "Quiz pha cà phê" },
@@ -400,11 +401,28 @@
     return QUIZZES[state.quizId];
   }
 
+  function isPageMode() {
+    return document.body.classList.contains("quiz-page");
+  }
+
   function viewName(screen) {
-    return "/game/quiz/" + quiz().rumKey + "/" + screen;
+    return "/quiz/" + quiz().rumKey + "/" + screen;
+  }
+
+  function syncUrl(screen) {
+    if (!isPageMode() || !quiz()) return;
+    var path = viewName(screen);
+    if (window.location.pathname === path) return;
+    var payload = { quiz: quiz().rumKey, screen: screen };
+    if (!window.history.state || window.history.state.quiz !== quiz().rumKey) {
+      history.replaceState(payload, "", path);
+    } else {
+      history.pushState(payload, "", path);
+    }
   }
 
   function startView(screen) {
+    syncUrl(screen);
     rum(function (r) {
       if (typeof r.startView === "function") {
         r.startView({ name: viewName(screen) });
@@ -417,6 +435,7 @@
   }
 
   function restoreGameView() {
+    if (isPageMode()) return;
     rum(function (r) {
       if (typeof r.startView === "function") {
         r.startView({ name: "/game" });
@@ -514,13 +533,16 @@
   }
 
   function shell(inner) {
+    var closeCtl = isPageMode()
+      ? '<a class="quiz-close" href="/game" data-dd-action-name="quiz_return_game" aria-label="' + esc(tx(CHROME.close)) + '">×</a>'
+      : '<button type="button" class="quiz-close" data-quiz-close aria-label="' + esc(tx(CHROME.close)) + '">×</button>';
     return (
-      '<div class="quiz-overlay" role="dialog" aria-modal="true" aria-label="' + esc(tx(CHROME.quizLabel)) + '">' +
+      '<div class="quiz-overlay" role="main" aria-label="' + esc(tx(CHROME.quizLabel)) + '">' +
         '<div class="quiz-shell">' +
           '<div class="quiz-topbar">' +
             langToggleHtml() +
             '<div class="quiz-progress" aria-hidden="true">' + progressHtml() + "</div>" +
-            '<button type="button" class="quiz-close" data-quiz-close aria-label="' + esc(tx(CHROME.close)) + '">×</button>' +
+            closeCtl +
           "</div>" +
           '<div class="quiz-stage">' + inner + "</div>" +
         "</div>" +
@@ -590,9 +612,14 @@
         '<p class="quiz-subcopy">' + esc(tx(q.result.brewLine)) + "</p>" +
         '<div class="quiz-stars">' + esc(q.result.stars) + "</div>" +
         statsHtml(q.result.stats) +
-        '<button type="button" class="quiz-primary" data-quiz-again data-dd-action-name="quiz_guess_again">' +
-          esc(tx(CHROME.guessAgain)) +
-        "</button>"
+        '<div class="quiz-complete-actions">' +
+          '<a class="quiz-primary" href="/game" data-dd-action-name="quiz_return_game">' +
+            esc(tx(CHROME.returnToGame)) +
+          "</a>" +
+          '<button type="button" class="quiz-secondary" data-quiz-again data-dd-action-name="quiz_guess_again">' +
+            esc(tx(CHROME.guessAgain)) +
+          "</button>" +
+        "</div>"
       );
     } else {
       html = shell(stepInnerHtml());
@@ -652,7 +679,7 @@
       btn.addEventListener("click", begin);
     });
     overlay.querySelectorAll("[data-quiz-again]").forEach(function (btn) {
-      btn.addEventListener("click", close);
+      btn.addEventListener("click", guessAgain);
     });
     overlay.querySelectorAll("[data-choice]").forEach(function (btn) {
       btn.addEventListener("click", function () {
@@ -823,6 +850,16 @@
     render();
   }
 
+  function guessAgain() {
+    state.screen = "opening";
+    state.stepIndex = 0;
+    state.beatIndex = 0;
+    state.feedback = null;
+    state.locked = false;
+    stopJourneyVital();
+    render();
+  }
+
   function completeQuiz() {
     var duration = Date.now() - (state.startedAt || Date.now());
     stopJourneyVital();
@@ -850,8 +887,8 @@
     state.feedback = null;
     onCloseCallback = typeof opts.onClose === "function" ? opts.onClose : null;
     ensureRoot().hidden = false;
-    document.body.classList.add("quiz-open");
-    addAction("quiz_started", { quiz: quizId, source: "cta" });
+    if (!isPageMode()) document.body.classList.add("quiz-open");
+    addAction("quiz_started", { quiz: quizId, source: isPageMode() ? "page" : "cta" });
     render();
     document.addEventListener("keydown", onKey);
   }
@@ -877,6 +914,10 @@
   function close() {
     stopJourneyVital();
     document.removeEventListener("keydown", onKey);
+    if (isPageMode()) {
+      window.location.href = "/game";
+      return;
+    }
     document.body.classList.remove("quiz-open");
     if (root) {
       root.hidden = true;
@@ -922,4 +963,16 @@
     playCelebration: playCelebration,
     ids: { milk: "sua-da", egg: "trung" }
   };
+
+  function quizIdFromPath() {
+    var match = window.location.pathname.match(/^\/quiz\/(sua-da|trung)(?:\/|$)/);
+    return match ? match[1] : null;
+  }
+
+  if (isPageMode()) {
+    var pageQuizId = document.body.getAttribute("data-quiz-id") || quizIdFromPath();
+    if (pageQuizId && QUIZZES[pageQuizId]) {
+      launch(pageQuizId);
+    }
+  }
 })(window);

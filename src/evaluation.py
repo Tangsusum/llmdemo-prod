@@ -8,8 +8,11 @@ from .config import log
 
 ICED_MILK_MARKERS = (
     "iced milk coffee",
+    "iced milk",
     "cà phê sữa đá",
     "ca phe sua da",
+    "cà phê sữa",
+    "ca phe sua",
     "sữa đá",
     "sua da",
 )

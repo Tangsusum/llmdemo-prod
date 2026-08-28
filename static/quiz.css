@@ -107,6 +107,12 @@
   background: linear-gradient(90deg, #E8791D 0%, #D95417 100%);
 }
 
+a.quiz-launch-cta {
+  text-decoration: none;
+  color: #ffffff;
+  box-sizing: border-box;
+}
+
 .quiz-launch-kicker {
   font-size: 0.88rem;
   font-weight: 600;
@@ -209,6 +215,10 @@
   line-height: 1;
   box-shadow: var(--shadow-sm);
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
 }
 
 .quiz-stage {
@@ -399,6 +409,29 @@
 
 .quiz-primary:hover {
   background: linear-gradient(90deg, #E8791D 0%, #D95417 100%);
+}
+
+a.quiz-primary {
+  text-decoration: none;
+  color: #fff;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quiz-complete-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 0.5rem;
+}
+
+body.quiz-page .quiz-overlay {
+  position: relative;
+  inset: auto;
+  min-height: 100vh;
+  z-index: 1;
 }
 
 .quiz-secondary {
