@@ -10,7 +10,7 @@ services:
     container_name: llm-vn-app
     environment:
       - DD_SERVICE=hanoi-coffee-guardrail-vn
-      - DD_ENV=vn-production
+      - DD_ENV=production
       - DD_LLMOBS_ML_APP=hanoi-coffee-guardrail-vn
 
     # /menu now 302-redirects to /game, so probe /game directly.
@@ -24,7 +24,7 @@ services:
   datadog:
     container_name: datadog-vn
     environment:
-      - DD_ENV=vn-production
+      - DD_ENV=production
       - DD_TAGS=market:vn
 
 networks:
