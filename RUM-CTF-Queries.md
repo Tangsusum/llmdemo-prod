@@ -1,42 +1,55 @@
 # RUM + Journey Monitoring — Hanoi Coffee Guardrail
 
-RUM app ID: `95ad2a6f-23d2-4f1b-8e44-46f0570d49a4`  
-Service: `hanoi-coffee-guardrail-vn`  
+Laptop and `vn.dd-demo-sg-llm.com` use the same Datadog identity. Host name may differ; tags must not.
+
+| Surface | Vietnam (local and deploy) |
+| --- | --- |
+| RUM app | **Hanoi Coffee Guardrail** (`95ad2a6f-23d2-4f1b-8e44-46f0570d49a4`) |
+| `service` / `ml_app` | `hanoi-coffee-guardrail-vn` |
+| `env` (APM, RUM, Feature Flags) | `production` |
+| `version` | `1.0.0` |
+| Prompt | `hanoi-coffee-recommender` deployed to Feature Flags env `production` |
+| AI Guard | service `hanoi-coffee-guardrail-vn` |
+
+Do not filter VN on leftover service `hanoi-coffee-guardrail` (no `-vn`) or Singapore `sg-hawker-showdown` / `sg-production`. Prompt Management publishes the coffee prompt to `production`, not `vn-production`.
+
 Dashboard: https://bang.datadoghq.com/dashboard/n4m-52n-kwr
 
 Journey Monitoring is Preview (no create-journey API). Create or edit journeys in **[Digital Experience → Journey Monitoring](https://bang.datadoghq.com/digital-experience/journeys) → New Journey**.
 
-In the start/end pickers, choose **View name** (not URL path). Datadog groups `/quiz/sua-da/step-1`…`step-5` as `/quiz/sua-da/?`. The browser URL is still `/quiz/sua-da/step-N`; `@view.name` is the exact string below. `/game` stays the URL even when the named view is `/game/result/sua-da`.
+In the start/end pickers, choose **View name** (not URL path). Datadog groups `/quiz/sua-da/step-1`…`step-5` as `/quiz/sua-da/?` — do not pick the grouped `/?` name; it will not match `@view.name`. `/game` stays the URL even when the named view is `/game/result/sua-da`.
 
 Do **not** use the old overlay names `/game/quiz/...`.
 
 ## Datadog UI setup
 
-Frontend application: **Hanoi Coffee Guardrail** (`95ad2a6f-23d2-4f1b-8e44-46f0570d49a4`).
+Frontend application: **Hanoi Coffee Guardrail** (`95ad2a6f-23d2-4f1b-8e44-46f0570d49a4`). RUM `service`, `env`, and `version` come from `DD_SERVICE` / `DD_ENV` / `DD_VERSION` and must match the backend: `hanoi-coffee-guardrail-vn` / `production` / `1.0.0`.
 
-For each journey: name → start event → end event → optional variant → **Save Journey**. Edit existing journeys if they still end on `/game/quiz/...`.
+[Step 2](https://docs.datadoghq.com/journey_monitoring/#step-2---specify-journey-details) is only: app → name → **start event(s)** → **end event(s)** → Save. The [map](https://docs.datadoghq.com/journey_monitoring/map/) nodes are **pages or journeys**. Two journeys get a connecting line only when they share a **view** (the end of one is the start of the next). Actions do not create map edges. [Variants](https://docs.datadoghq.com/journey_monitoring/details_report/variants/) are a filter on steps *inside* one journey; they never link two journeys.
 
-| Journey | Start (picker) | End (picker) | Variant steps (optional) |
+For each journey: name → one start **View** → one end **View** → optional short variant → **Save Journey**. Edit Win/Brew if they still start or end on `ctf_challenge_won` / `ctf_challenge_held`.
+
+| Journey | Start (View) | End (View) | Variant (optional, keep short) |
 | --- | --- | --- | --- |
-| Enter the cafe | View `/` | View `/game` | — |
-| Win the Guardrail | View `/game` | Action `ctf_challenge_won` | Action `ctf_challenge_attempt` → View `/game/result/sua-da` |
-| Guardrail held | View `/game` | Action `ctf_challenge_held` | Action `ctf_challenge_attempt` → View `/game/result/trung` |
-| Brew sữa đá | Action `ctf_challenge_won` | View `/quiz/sua-da/complete` | Action `quiz_started` → View `/quiz/sua-da/opening` → `/quiz/sua-da/step-1` … `step-5` |
-| Brew trứng | Action `ctf_challenge_held` | View `/quiz/trung/complete` | Action `quiz_started` → View `/quiz/trung/opening` → `/quiz/trung/step-1` … `step-5` |
+| Enter the cafe | `/` | `/game` | — |
+| Win the Guardrail | `/game` | `/quiz/sua-da/opening` | Action `ctf_challenge_won` |
+| Guardrail held | `/game` | `/quiz/trung/opening` | Action `ctf_challenge_held` |
+| Brew sữa đá | `/quiz/sua-da/opening` | `/quiz/sua-da/complete` | Action `quiz_begin` |
+| Brew trứng | `/quiz/trung/opening` | `/quiz/trung/complete` | Action `quiz_begin` |
 
-Brew journeys **chain** off the guardrail journeys: brew start = previous journey end. Do not start brew at `quiz_started` or those tiles float off the map.
+If `/quiz/sua-da/opening` is missing from the picker, use View `/quiz/sua-da` for both Win end and Brew start (same idea for trứng).
 
-Do **not** add the trứng quiz as a second end on **Win the Guardrail**.
+Do **not** start Brew on action `ctf_challenge_won`. Do **not** add step-1…step-5 as variant steps (the picker’s `/quiz/sua-da/?` does not match). Do **not** add the trứng quiz as a second end on **Win the Guardrail**.
 
-After saving, run two sessions: Egg Allergy → milk quiz, then Start Simple → egg quiz.
+After saving, run two sessions: Egg Allergy → open the sữa đá quiz, then Start Simple → open the trứng quiz.
 
 ## Journey recipes
 
-A win is always sữa đá. Trứng is the hold path. The map is a **Y**:
+A win is always sữa đá. Trứng is the hold path. The map is a **Y** of **pages**:
 
 ```
-/  → /game → Win the Guardrail → /quiz/sua-da/complete
-            → Guardrail held     → /quiz/trung/complete
+/  → /game → /quiz/sua-da/opening           → /quiz/sua-da/complete
+            → /quiz/trung/opening           → /quiz/trung/complete
 ```
 
 If Journey Monitoring is not enabled, request access: https://www.datadoghq.com/product-preview/journey-monitoring/
@@ -72,6 +85,7 @@ Leave RUM collection on if you want Journey Monitoring to see the synthetic path
 
 - `ctf_challenge_attempt` — every submit (`success` true/false, `verdict`)
 - `ctf_challenge_won` — additional action when iced milk coffee is recommended (`valid_break`)
+- `ctf_ai_guard_blocked` — jailbreak / instruction-override DENY; the model did not run
 - Click on the challenge button uses `data-dd-action-name="attempt_challenge"` (VI/EN-safe)
 
 ### Quiz
@@ -80,6 +94,7 @@ Leave RUM collection on if you want Journey Monitoring to see the synthetic path
 - Real pages: `/quiz/sua-da` and `/quiz/trung` (full navigation off `/game`)
 - Views: `/quiz/{sua-da|trung}/opening` / `step-1`…`step-5` / `complete`
 - After an AI answer: view `/game/result/sua-da` or `/game/result/trung`
+- After an AI Guard DENY: view `/game/result/ai-guard`
 
 ### Winner action attributes
 
@@ -87,7 +102,7 @@ Leave RUM collection on if you want Journey Monitoring to see the synthetic path
 
 ## Dashboard and Explorer queries
 
-Filter every query with `@application.id:95ad2a6f-23d2-4f1b-8e44-46f0570d49a4 @session.type:user`.
+Filter every query with `@application.id:95ad2a6f-23d2-4f1b-8e44-46f0570d49a4 @session.type:user env:production`.
 
 ### Winners
 
@@ -120,10 +135,45 @@ Filter every query with `@application.id:95ad2a6f-23d2-4f1b-8e44-46f0570d49a4 @s
 - `@user.ctf_winner:true`
 - `@user.ctf_status:winner`
 
-## LLM Observability
+## RUM ↔ APM ↔ LLM Observability
+
+RUM injects a trace on `POST /api/game`. Flask continues it. LLM Observability stores a separate 128-bit id and links back with `apm_trace_id`.
+
+1. **RUM** → resource `/api/game` → flame **View Trace** (uses `@_dd.trace_id`).
+2. **APM** → same 64-bit id; look for `browser.request` + `src.routes.game_api` + `ai_guard` / OpenAI children.
+3. **LLM Observability** → `@ml_app:hanoi-coffee-guardrail-vn` → **View APM Trace** (not the LLMObs `trace_id`).
 
 ```
-@ml_app:hanoi-coffee-guardrail-vn @name:process_ctf_request
-@ml_app:hanoi-coffee-guardrail-vn @name:process_ctf_request ctf.challenge_status:completed
-@ml_app:hanoi-coffee-guardrail-vn @name:process_ctf_request ctf.challenge_status:failed
+@type:resource @resource.url:*/api/game* env:production
+service:hanoi-coffee-guardrail-vn env:production @_dd.origin:rum
+@ml_app:hanoi-coffee-guardrail-vn env:production @tags:"rum.session_id:<session>"
+```
+
+Live `vn.dd-demo-sg-llm.com` only shows `browser.request` until the app is redeployed to send traces to `datadog:8126`.
+
+## LLM Observability
+
+Open **LLM Observability → Traces** (not APM, not Sessions until a real session id is set). Filter:
+
+`@ml_app:hanoi-coffee-guardrail-vn env:production`
+
+Direct: [hanoi-coffee-guardrail-vn traces](https://bang.datadoghq.com/llm/traces?query=%40ml_app%3Ahanoi-coffee-guardrail-vn%20env%3Aproduction)
+
+Do not use service `hanoi-coffee-guardrail` (no `-vn`). Jailbreak traces are workflow-only (no OpenAI child) because AI Guard skips the model — use an egg-allergy prompt to see `OpenAI.createChatCompletion`.
+
+```
+@ml_app:hanoi-coffee-guardrail-vn env:production @name:process_ctf_request
+@ml_app:hanoi-coffee-guardrail-vn env:production @name:process_ctf_request ctf.challenge_status:completed
+@ml_app:hanoi-coffee-guardrail-vn env:production @name:process_ctf_request ctf.challenge_status:failed
+@ml_app:hanoi-coffee-guardrail-vn env:production @span_kind:llm
+```
+
+### AI Guard
+
+Indexed APM spans (`resource_name:ai_guard`), not the Evaluate HTTP API. Open **Security → AI Guard → Evaluations**, not Signals (signals need a detection rule).
+
+```
+service:hanoi-coffee-guardrail-vn env:production operation_name:ai_guard
+service:hanoi-coffee-guardrail-vn env:production operation_name:ai_guard @ai_guard.action:(DENY OR ABORT)
+service:hanoi-coffee-guardrail-vn env:production operation_name:ai_guard @ai_guard.blocked:true
 ```

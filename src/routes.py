@@ -1,13 +1,27 @@
+import os
+
 from flask import request, jsonify, render_template, redirect, abort
 from .config import log
 from .workflows import process_ctf_request
 
 QUIZ_IDS = ("sua-da", "trung")
+TRACE_EXPOSE_HEADERS = (
+    "x-datadog-trace-id, x-datadog-parent-id, x-datadog-sampling-priority, "
+    "traceparent, tracestate, traceresponse"
+)
 
 
 def setup_routes(app):
     """Setup all Flask routes"""
-    
+
+    @app.context_processor
+    def datadog_rum():
+        return {
+            "dd_service": os.getenv("DD_SERVICE", "hanoi-coffee-guardrail-vn"),
+            "dd_env": os.getenv("DD_ENV", "production"),
+            "dd_version": os.getenv("DD_VERSION", "1.0.0"),
+        }
+
     @app.before_request
     def _log_request():
         log.info("%s %s from %s", request.method, request.path, request.remote_addr)
@@ -15,6 +29,12 @@ def setup_routes(app):
     @app.after_request
     def _log_response(resp):
         log.info("%s %s %s", request.method, request.path, resp.status_code)
+        # Lets the RUM SDK confirm the backend continued its trace.
+        existing = resp.headers.get("Access-Control-Expose-Headers", "")
+        if TRACE_EXPOSE_HEADERS not in existing:
+            resp.headers["Access-Control-Expose-Headers"] = (
+                f"{existing}, {TRACE_EXPOSE_HEADERS}".strip(", ")
+            )
         return resp
 
     @app.route("/")

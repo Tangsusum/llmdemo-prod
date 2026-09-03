@@ -81,3 +81,15 @@ def system_content_from_messages(rendered) -> str:
         if _message_field(message, "role") == "system":
             return _message_field(message, "content") or ""
     return SYSTEM_TEMPLATE
+
+
+def openai_messages_from_rendered(rendered):
+    """Convert Prompt Management output into OpenAI chat messages."""
+    if isinstance(rendered, str):
+        return [{"role": "user", "content": rendered}]
+    messages = []
+    for message in rendered:
+        role = _message_field(message, "role") or "user"
+        content = _message_field(message, "content") or ""
+        messages.append({"role": role, "content": content})
+    return messages or [{"role": "user", "content": ""}]

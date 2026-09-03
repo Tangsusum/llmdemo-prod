@@ -26,9 +26,9 @@
         applicationId: '95ad2a6f-23d2-4f1b-8e44-46f0570d49a4',
         clientToken: 'pub65c3cc3be5c573795f0bfffdc7cc3857',
         site: 'datadoghq.com',
-        service: 'hanoi-coffee-guardrail-vn',
-        env: 'production',
-        version: '1.0.0',
+        service: '{{ dd_service }}',
+        env: '{{ dd_env }}',
+        version: '{{ dd_version }}',
         sessionSampleRate: 100,
         sessionReplaySampleRate: 100,
         trackUserInteractions: true,
@@ -38,9 +38,10 @@
         allowedTracingUrls: [
           {
             match: function (url) {
-              return url.startsWith(window.location.origin) ||
-                url.startsWith("https://prod.dd-demo-sg-llm.com") ||
-                url.startsWith("https://dd-demo-sg-llm.com");
+              if (!url) return false;
+              if (url.startsWith(window.location.origin)) return true;
+              return /https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?(?:\/|$)/.test(url) ||
+                /https:\/\/(?:[a-z0-9-]+\.)?dd-demo-sg-llm\.com(?:\/|$)/.test(url);
             },
             propagatorTypes: ["datadog", "tracecontext"]
           }
