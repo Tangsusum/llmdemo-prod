@@ -136,7 +136,7 @@ def _process_ctf_request(msg):
         )
         response = openai_client.chat.completions.create(
             model=OPENAI_CHAT_MODEL,
-            temperature=0.1,
+            temperature=0,
             max_tokens=200,
             messages=messages,
         )

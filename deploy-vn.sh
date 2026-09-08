@@ -166,6 +166,16 @@ deploy_vm() {
     return 1
   fi
 
+  # A present-but-blank DD_API_KEY/DD_APP_KEY passes the check above yet
+  # silently disables AI Guard (it fails closed with just a log warning, so
+  # the app boots and passes health checks either way) — check the values too.
+  local missing_keys
+  missing_keys=$(on_vm "$vm" "grep -qE '^DD_API_KEY=.+' \"\$HOME/$PROJECT_DIR/.env\" || echo DD_API_KEY; grep -qE '^DD_APP_KEY=.+' \"\$HOME/$PROJECT_DIR/.env\" || echo DD_APP_KEY")
+  if [[ -n "$missing_keys" ]]; then
+    fail "$vm: ~/$PROJECT_DIR/.env is missing or has a blank value for: $(echo "$missing_keys" | tr '\n' ' ')"
+    return 1
+  fi
+
   local build_cmd="docker compose $COMPOSE_FILES build --pull"
   [[ -n "${NO_BUILD:-}" ]] && build_cmd="echo '  (NO_BUILD set, skipping build)'"
 

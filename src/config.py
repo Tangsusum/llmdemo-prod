@@ -72,7 +72,7 @@ openai_client = OpenAI(
     timeout=12,
     max_retries=1,
 )
-OPENAI_CHAT_MODEL = "gpt-3.5-turbo"
+OPENAI_CHAT_MODEL = "gpt-4o-mini"
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 fmt = (
@@ -105,7 +105,7 @@ def _get_ai_guard_client():
         _honor_local_ai_guard_block_option()
         _ai_guard_client = new_ai_guard_client()
     except Exception as exc:
-        log.warning("AI Guard client unavailable: %s", exc)
+        log.error("AI Guard DISABLED for this process — client unavailable: %s", exc)
         _ai_guard_client = None
     return _ai_guard_client
 
