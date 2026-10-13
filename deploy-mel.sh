@@ -1,39 +1,42 @@
 #!/bin/bash
 #
-# Rolling redeploy for the VN (Vietnam) fleet behind https://vn.dd-demo-sg-llm.com/
+# Rolling redeploy for the MEL (Melbourne) fleet behind https://mel.dd-demo-sg-llm.com/
 #
 # Deploys one VM at a time and waits for each to report healthy before moving
 # on, so the load balancer always has at least one good backend and the site
 # stays up through a redeploy.
 #
 # Usage:
-#   ./deploy-vn.sh                     # redeploy all VN VMs from main
-#   BRANCH=market/vietnam ./deploy-vn.sh   # redeploy from another branch
-#   ./deploy-vn.sh llm-vn-vm2          # redeploy a single VM
-#   NO_BUILD=1 ./deploy-vn.sh          # restart without rebuilding the image
-#   ./deploy-vn.sh --status            # health/status report, deploy nothing
+#   ./deploy-mel.sh                      # redeploy all MEL VMs from melbourne-theme
+#   BRANCH=main ./deploy-mel.sh          # redeploy from another branch
+#   ./deploy-mel.sh llm-mel-vm2          # redeploy a single VM
+#   NO_BUILD=1 ./deploy-mel.sh           # restart without rebuilding the image
+#   ./deploy-mel.sh --status             # health/status report, deploy nothing
 #
-# This script only ever touches VMs named llm-vn-*. It refuses anything else,
-# so it cannot disturb the Singapore prod (llm-demo-*), llm-live-*, or
-# llm-prod-app-jacob-* fleets that share this project.
+# This is a SEPARATE deployment from the older VN fleet, which keeps its own
+# instance group, backend service, certificate, and IP (llm-vn-*).
+#
+# This script only ever touches VMs named llm-mel-*. It refuses anything else,
+# so it cannot disturb the VN (llm-vn-*), Singapore prod (llm-demo-*),
+# llm-sg-*, llm-live-*, or llm-prod-app-jacob-* fleets that share this project.
 
 set -uo pipefail
 
 # ---------------------------------------------------------------- configuration
 PROJECT="${PROJECT:-mcse-sandbox}"
 ZONE="${ZONE:-us-central1-a}"
-BRANCH="${BRANCH:-main}"
+BRANCH="${BRANCH:-melbourne-theme}"
 PROJECT_DIR="llmdemo-prod"
-REPO_URL="https://github.com/justbanggg/llmdemo-prod.git"
-COMPOSE_FILES="-f docker-compose-backend.yml -f docker-compose.deploy.yml"
-APP_CONTAINER="llm-app"
+REPO_URL="https://github.com/Tangsusum/llmdemo-prod.git"
+COMPOSE_FILES="-f docker-compose-backend.yml -f docker-compose.mel.yml"
+APP_CONTAINER="llm-mel-app"
 HEALTH_PATH="/game"          # /menu 302-redirects here; LB probes /game
 APP_PORT=5000
-BACKEND_SERVICE="llm-vn-backend"
-DOMAIN="vn.dd-demo-sg-llm.com"
+BACKEND_SERVICE="llm-mel-backend"
+DOMAIN="mel.dd-demo-sg-llm.com"
 
-# The fleet. Add new VMs here after adding them to the llm-vn-group.
-ALL_VMS=(llm-vn-vm1 llm-vn-vm2)
+# The fleet. Add new VMs here after adding them to the llm-mel-group.
+ALL_VMS=(llm-mel-vm1 llm-mel-vm2)
 
 HEALTH_RETRIES="${HEALTH_RETRIES:-30}"   # × 10s = up to 5 min per VM
 HEALTH_SLEEP=10
@@ -67,10 +70,10 @@ on_vm() {
      --tunnel-through-iap --quiet --command="$*"
 }
 
-# Refuse to act on anything outside the VN fleet.
-assert_vn_vm() {
+# Refuse to act on anything outside the MEL fleet.
+assert_mel_vm() {
   local vm="$1"
-  [[ "$vm" == llm-vn-* ]] || die "refusing to touch '$vm' — this script only manages llm-vn-* VMs"
+  [[ "$vm" == llm-mel-* ]] || die "refusing to touch '$vm' — this script only manages llm-mel-* VMs"
   local known=0 v
   for v in "${ALL_VMS[@]}"; do [[ "$v" == "$vm" ]] && known=1; done
   [[ "$known" == 1 ]] || die "'$vm' is not in ALL_VMS — add it to the script first"
@@ -229,7 +232,7 @@ main() {
 
   local targets=()
   if [[ $# -gt 0 ]]; then
-    for vm in "$@"; do assert_vn_vm "$vm"; targets+=("$vm"); done
+    for vm in "$@"; do assert_mel_vm "$vm"; targets+=("$vm"); done
   else
     targets=("${ALL_VMS[@]}")
   fi

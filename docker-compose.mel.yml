@@ -1,7 +1,10 @@
-# Deploy override for the hosted demo.
+# MEL (Melbourne) deploy override for https://mel.dd-demo-sg-llm.com/
 #
 # Usage (always layered on top of the backend compose file):
-#   docker compose -f docker-compose-backend.yml -f docker-compose.deploy.yml up -d
+#   docker compose -f docker-compose-backend.yml -f docker-compose.mel.yml up -d
+#
+# This is a separate deployment from the older VN fleet. Container and network
+# names are mel-scoped so the two can never collide on a shared host.
 #
 # Pins the deployed Datadog identity to env `production` so telemetry never
 # merges with the Singapore hawker fleet (`sg-hawker-showdown` / `sg-production`),
@@ -10,7 +13,7 @@
 # Prompt Management publishes the coffee prompt to Feature Flags env `production`.
 services:
   app:
-    container_name: llm-app
+    container_name: llm-mel-app
     environment:
       - DD_SERVICE=melbourne-coffee-guardrail
       - DD_ENV=production
@@ -30,12 +33,13 @@ services:
       start_period: 40s
 
   datadog:
-    container_name: datadog
+    container_name: datadog-mel
     environment:
       - DD_ENV=production
+      - DD_TAGS=market:mel
       - DD_APM_ENABLED=true
       - DD_APM_NON_LOCAL_TRAFFIC=true
 
 networks:
   default:
-    name: llm-network
+    name: llm-mel-network
