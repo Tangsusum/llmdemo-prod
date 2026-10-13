@@ -1,4 +1,4 @@
-/* ===== DATADOG VIETNAM — WARM COFFEE THEME ===== */
+/* ===== APIDAYS AUSTRALIA 2026 — WARM COFFEE THEME ===== */
 
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap');
 
@@ -404,45 +404,11 @@ li a:hover {
   border-color: var(--error-border);
 }
 
-.lang-toggle {
-  display: inline-flex;
-  background: rgba(255, 252, 247, 0.95);
-  border: 1px solid var(--border-light);
-  border-radius: 999px;
-  padding: 0.2rem;
-  box-shadow: var(--shadow-sm);
-}
-
-.lang-btn {
-  background: transparent;
-  border: none;
-  border-radius: 999px;
-  padding: 0.35rem 0.85rem;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: var(--text-muted);
-  cursor: pointer;
-  box-shadow: none;
-}
-
-.lang-btn.is-active {
-  background: var(--primary-gradient);
-  color: #FFFFFF;
-  box-shadow: var(--shadow-button);
-}
-
 .landing {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   padding: 1.25rem 1.25rem 2.5rem;
-}
-
-.landing-topbar {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 0.5rem;
 }
 
 .landing-hero {

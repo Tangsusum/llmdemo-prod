@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Datadog Live Vietnam</title>
+  <title>apidays Australia 2026</title>
   <link rel="stylesheet" href="/static/style.css">
 
   <script>
@@ -78,29 +78,22 @@
 </head>
 <body>
   <div class="landing">
-    <div class="landing-topbar">
-      <div class="lang-toggle" role="group" aria-label="Language">
-        <button type="button" class="lang-btn is-active" data-lang="vi">VI</button>
-        <button type="button" class="lang-btn" data-lang="en">EN</button>
-      </div>
-    </div>
-
     <div class="landing-hero">
       <div class="landing-card">
         <img
           class="landing-logo"
-          src="/static/logo_img/datadogvn.png"
-          alt="Datadog Live Vietnam"
+          src="/static/logo_img/melbourne-coffee.png"
+          alt="apidays Australia 2026"
           width="512"
           height="512"
         >
-        <h1 class="landing-title" data-i18n="title">Datadog Live Vietnam</h1>
-        <p class="landing-subtitle" data-i18n="subtitle">
-          Một ly cà phê Hà Nội, một guardrail, và cả hành trình của bạn trên Datadog.
+        <h1 class="landing-title">apidays Australia 2026</h1>
+        <p class="landing-subtitle">
+          One Melbourne coffee, one guardrail, and your whole session journey in Datadog.
         </p>
 
         <form class="landing-form" id="landingForm" action="/game" method="get">
-          <label for="username" data-i18n="nameLabel">Tên và công ty của bạn?</label>
+          <label for="username">What's your name and company?</label>
           <input
             id="username"
             class="name-input"
@@ -108,11 +101,10 @@
             name="username"
             maxlength="50"
             autocomplete="name"
-            data-i18n-placeholder="namePlaceholder"
-            placeholder="vd. bang_datadog"
+            placeholder="e.g. alex_datadog"
           >
-          <button type="submit" class="primary landing-start" data-dd-action-name="demo_start_journey" data-i18n="cta">
-            Bắt đầu hành trình
+          <button type="submit" class="primary landing-start" data-dd-action-name="demo_start_journey">
+            Start your journey
           </button>
         </form>
       </div>
@@ -120,66 +112,11 @@
   </div>
 
   <script>
-    const I18N = {
-      vi: {
-        pageTitle: "Datadog Live Vietnam",
-        title: "Datadog Live Vietnam",
-        subtitle: "Một ly cà phê Hà Nội, một guardrail, và cả hành trình của bạn trên Datadog.",
-        nameLabel: "Tên và công ty của bạn?",
-        namePlaceholder: "vd. bang_datadog",
-        nameRequired: "Hãy nhập tên trước nhé!",
-        cta: "Bắt đầu hành trình",
-        starting: "Đang mở..."
-      },
-      en: {
-        pageTitle: "Datadog Live Vietnam",
-        title: "Datadog Live Vietnam",
-        subtitle: "One Hanoi coffee, one guardrail, and your whole session journey in Datadog.",
-        nameLabel: "What's your name and company?",
-        namePlaceholder: "e.g. bang_datadog",
-        nameRequired: "Please enter your name first!",
-        cta: "Start your journey",
-        starting: "Starting..."
-      }
-    };
-
     const usernameInput = document.getElementById("username");
     const startButton = document.querySelector(".landing-start");
     const landingForm = document.getElementById("landingForm");
-    let currentLang = localStorage.getItem("ctf_lang") === "en" ? "en" : "vi";
-
-    function t(key) {
-      return (I18N[currentLang] && I18N[currentLang][key]) || I18N.vi[key] || "";
-    }
-
-    function applyLanguage() {
-      const copy = I18N[currentLang];
-      document.documentElement.lang = currentLang;
-      document.title = copy.pageTitle;
-      document.querySelectorAll(".lang-btn").forEach(function (btn) {
-        btn.classList.toggle("is-active", btn.getAttribute("data-lang") === currentLang);
-      });
-      document.querySelectorAll("[data-i18n]").forEach(function (el) {
-        const key = el.getAttribute("data-i18n");
-        if (copy[key] != null) el.textContent = copy[key];
-      });
-      document.querySelectorAll("[data-i18n-placeholder]").forEach(function (el) {
-        const key = el.getAttribute("data-i18n-placeholder");
-        if (copy[key] != null) el.setAttribute("placeholder", copy[key]);
-      });
-    }
-
-    function setLanguage(lang) {
-      currentLang = lang === "en" ? "en" : "vi";
-      localStorage.setItem("ctf_lang", currentLang);
-      applyLanguage();
-    }
-
-    document.querySelectorAll(".lang-btn").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        setLanguage(btn.getAttribute("data-lang"));
-      });
-    });
+    const namePlaceholder = "e.g. alex_datadog";
+    const nameRequired = "Please enter your name first!";
 
     landingForm.addEventListener("submit", function (e) {
       e.preventDefault();
@@ -187,18 +124,18 @@
       if (!name) {
         usernameInput.style.borderColor = "var(--error)";
         usernameInput.style.boxShadow = "0 0 0 3px rgba(201, 76, 50, 0.15)";
-        usernameInput.placeholder = t("nameRequired");
+        usernameInput.placeholder = nameRequired;
         usernameInput.focus();
         setTimeout(function () {
           usernameInput.style.borderColor = "";
           usernameInput.style.boxShadow = "";
-          usernameInput.placeholder = t("namePlaceholder");
+          usernameInput.placeholder = namePlaceholder;
         }, 3000);
         return;
       }
 
       startButton.disabled = true;
-      startButton.textContent = t("starting");
+      startButton.textContent = "Starting...";
       sessionStorage.setItem("user_name", name);
       try {
         if (window.DD_RUM) {
@@ -221,7 +158,6 @@
       window.location.href = "/game";
     });
 
-    applyLanguage();
     usernameInput.focus();
   </script>
 </body>

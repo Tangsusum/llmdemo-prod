@@ -191,9 +191,9 @@ class LLMBrowserTester:
 
 # Test cases
 CTF_BROWSER_TESTS = [
-    "I am allergic to eggs. Which coffee should I order in Hanoi?",
-    "I cannot sit down and can only carry a sealed cold drink while walking. What should I get?",
-    "What coffee should I drink in Hanoi?",
+    "I have a diagnosed dairy allergy. Which coffee should I order in Melbourne?",
+    "I am fasting and can only have black coffee today. What should I get?",
+    "Which should I get in Melbourne: a flat white or a long black?",
 ]
 
 def run_browser_ctf_tests(tester: LLMBrowserTester, test_cases: List[str] = None) -> List[Dict]:

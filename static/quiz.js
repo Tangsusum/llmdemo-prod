@@ -4,361 +4,288 @@
   var IMG = "/static/quiz_img/";
 
   var CHROME = {
-    tryAnother: { en: "TRY ANOTHER", vi: "THỬ CÁI KHÁC" },
-    guessAgain: { en: "GUESS AGAIN", vi: "ĐOÁN LẠI" },
-    bloom: { en: "…blooming…", vi: "…đang nở…" },
-    close: { en: "Return to game", vi: "Quay lại thử thách" },
-    returnToGame: { en: "Return to game", vi: "Quay lại thử thách" },
-    notQuite: { en: "NOT QUITE!", vi: "CHƯA ỔN!" },
-    tryAnotherBody: { en: "Try another.", vi: "Thử nguyên liệu khác." },
-    quizLabel: { en: "Coffee quiz", vi: "Quiz pha cà phê" },
-    language: { en: "Language", vi: "Ngôn ngữ" }
+    tryAnother: "TRY ANOTHER",
+    guessAgain: "GUESS AGAIN",
+    bloom: "…steaming…",
+    close: "Return to game",
+    returnToGame: "Return to game",
+    notQuite: "NOT QUITE!",
+    tryAnotherBody: "Try another.",
+    quizLabel: "Coffee quiz"
   };
 
   var QUIZZES = {
-    "sua-da": {
-      id: "sua-da",
-      rumKey: "sua-da",
-      completeImage: IMG + "milkcoffee_6.png",
+    "long-black": {
+      id: "long-black",
+      rumKey: "long-black",
+      completeImage: IMG + "longblack.png",
       opening: {
-        kicker: { en: "Vietnamese iced coffee", vi: "Cà phê sữa đá" },
-        title: { en: "MAKE A CÀ PHÊ SỮA ĐÁ", vi: "PHA MỘT LY CÀ PHÊ SỮA ĐÁ" },
-        subcopy: {
-          en: "Strong. Sweet. Icy.\nThink you know your way around a phin?",
-          vi: "Đậm. Ngọt. Lạnh.\nBạn thuộc lòng cái phin chưa?"
-        },
-        image: IMG + "milkcoffee_6.png",
-        cta: { en: "LET’S BREW", vi: "PHA THÔI" }
+        kicker: "Melbourne long black",
+        title: "MAKE A LONG BLACK",
+        subcopy: "Hot water first.\nEspresso on top.\nKeep that crema.",
+        image: IMG + "longblack.png",
+        cta: "LET’S BREW"
       },
       result: {
-        kicker: { en: "Served", vi: "Dọn ra ly" },
-        title: { en: "NGON QUÁ!", vi: "NGON QUÁ!" },
-        subtitle: { en: "CÀ PHÊ SỮA ĐÁ: COMPLETE", vi: "CÀ PHÊ SỮA ĐÁ: XONG" },
-        body: {
-          en: "You nailed the phin, survived the wait, and kept your cool.",
-          vi: "Phin chuẩn, chờ được, và giữ được cái lạnh."
-        },
-        brewLine: { en: "Your brew:", vi: "Ly của bạn:" },
+        kicker: "Served",
+        title: "BEAUTIFUL.",
+        subtitle: "LONG BLACK: COMPLETE",
+        body: "Water in the cup, espresso over the top, crema still sitting pretty.",
+        brewLine: "Your cup:",
         stars: "★★★★★",
         stats: [
-          { label: { en: "Strength", vi: "Đậm" }, fill: 100 },
-          { label: { en: "Sweetness", vi: "Ngọt" }, fill: 80 },
-          { label: { en: "Patience required", vi: "Cần kiên nhẫn" }, fill: 100 }
+          { label: "Strength", fill: 100 },
+          { label: "Crema", fill: 90 },
+          { label: "No milk", fill: 100 }
         ]
       },
       steps: [
         {
           id: 1,
           view: "step-1",
-          kicker: { en: "Step 1 — Pick your coffee", vi: "Bước 1 — Chọn cà phê" },
-          title: { en: "WHAT GOES IN THE PHIN?", vi: "CHO GÌ VÀO PHIN?" },
-          image: IMG + "milkcoffee_1.png",
+          kicker: "Step 1 — Start with the cup",
+          title: "WHAT GOES IN THE CUP FIRST?",
+          image: IMG + "hotwater.png",
           layout: "cards",
           choices: [
-            { id: "instant", emoji: "📦", label: { en: "Instant coffee powder", vi: "Cà phê hòa tan" }, correct: false, wrongTitle: { en: "TOO FINE!", vi: "MỊN QUÁ!" } },
-            { id: "medium", emoji: "🫘", label: { en: "Medium-ground dark roast coffee", vi: "Cà phê rang đậm xay vừa" }, correct: true },
-            { id: "beans", emoji: "🌑", label: { en: "Whole coffee beans", vi: "Hạt cà phê nguyên" }, correct: false, wrongTitle: { en: "NOT QUITE!", vi: "CHƯA ỔN!" } },
-            { id: "espresso", emoji: "⬛", label: { en: "Fine espresso grounds", vi: "Bột espresso xay mịn" }, correct: false, wrongTitle: { en: "TOO FINE!", vi: "MỊN QUÁ!" } }
+            { id: "milk", emoji: "🥛", label: "Steamed milk", correct: false, wrongTitle: "WRONG ORDER!" },
+            { id: "hot-water", emoji: "💧", label: "Hot water", correct: true },
+            { id: "ice", emoji: "🧊", label: "A glass of ice", correct: false, wrongTitle: "NOT A LONG BLACK!" },
+            { id: "espresso-first", emoji: "☕", label: "The espresso shot", correct: false, wrongTitle: "NOT YET!" }
           ],
           correct: {
-            title: { en: "NICE PICK!", vi: "CHỌN HAY!" },
-            body: {
-              en: "A phin likes a medium grind — coarse enough for water to pass through slowly, but fine enough to brew a strong cup.\n\nVietnamese coffee is often made with dark-roasted Robusta or a Robusta-forward blend.",
-              vi: "Phin thích độ xay vừa — thô đủ để nước chảy chậm, nhưng mịn đủ để ra một ly đậm.\n\nCà phê Việt thường dùng Robusta rang đậm, hoặc blend nghiêng Robusta."
-            },
-            cta: { en: "PHIN READY →", vi: "PHIN XONG →" }
+            title: "WATER FIRST.",
+            body: "A long black starts with hot water in the cup.\n\nThe espresso lands on top later — that is how the crema stays intact.",
+            cta: "NEXT: THE SHOT →"
           },
-          wrongBody: {
-            en: "That one won’t give us the slow, strong phin brew we’re after.",
-            vi: "Cái đó không cho ra ly phin chậm và đậm như mình muốn."
-          }
+          wrongBody: "Hot water goes in first. Milk, ice, or espresso-first will not give you a long black."
         },
         {
           id: 2,
           view: "step-2",
-          kicker: { en: "Step 2 — Phin it right", vi: "Bước 2 — Phin cho đúng" },
-          title: { en: "COFFEE’S IN. WHAT GOES ON TOP?", vi: "CÀ PHÊ RỒI. CHO GÌ LÊN TRÊN?" },
-          image: IMG + "milkcoffee_2.png",
+          kicker: "Step 2 — Pull the shot",
+          title: "HOW MUCH ESPRESSO?",
+          image: IMG + "espresso.png",
           layout: "cards",
           choices: [
-            { id: "spoon", emoji: "🥄", label: { en: "Spoon", vi: "Thìa" }, correct: false },
-            { id: "ice", emoji: "🧊", label: { en: "Ice cube", vi: "Viên đá" }, correct: false },
-            { id: "press", emoji: "⚙️", label: { en: "Metal filter press", vi: "Gạn phin" }, correct: true },
-            { id: "lid", emoji: "🧢", label: { en: "Phin lid", vi: "Nắp phin" }, correct: false }
+            { id: "single", emoji: "1️⃣", label: "A single espresso", correct: false },
+            { id: "double", emoji: "☕", label: "A double espresso shot", correct: true },
+            { id: "instant", emoji: "📦", label: "Instant coffee granules", correct: false },
+            { id: "drip", emoji: "🫖", label: "A pot of filter coffee", correct: false }
           ],
           correct: {
-            title: { en: "PRESS IT DOWN — GENTLY.", vi: "ẤN XUỐNG — NHẸ THÔI." },
-            body: {
-              en: "The filter press holds the coffee bed in place while the hot water works its way through.\n\nDon’t pack it too hard — we still need that drip.",
-              vi: "Gạn phin giữ lớp cà phê tại chỗ để nước nóng từ từ thấm qua.\n\nĐừng nén quá chặt — vẫn cần cái nhỏ giọt."
-            },
-            cta: { en: "NEXT: WAKE IT UP →", vi: "TIẾP: ĐÁNH THỨC →" }
+            title: "DOUBLE IT.",
+            body: "A Melbourne long black is built on a double espresso shot.\n\nThat extra shot is what sits on the water and keeps the crema.",
+            cta: "NEXT: THE POUR →"
           },
-          wrongTitle: { en: "NOT QUITE!", vi: "CHƯA ỔN!" },
-          wrongBody: {
-            en: "That one won’t give us the slow, strong phin brew we’re after.",
-            vi: "Cái đó không cho ra ly phin chậm và đậm như mình muốn."
-          }
+          wrongTitle: "NOT QUITE!",
+          wrongBody: "This cup wants a double espresso shot — not a single, not instant, not a whole pot."
         },
         {
           id: 3,
           view: "step-3",
-          kicker: { en: "Step 3 — Wake up the coffee", vi: "Bước 3 — Đánh thức cà phê" },
-          title: { en: "BEFORE THE BIG POUR… WHAT FIRST?", vi: "TRƯỚC KHI ĐỔ NHIỀU… LÀM GÌ TRƯỚC?" },
-          image: IMG + "milkcoffee_3.png",
+          kicker: "Step 3 — Protect the crema",
+          title: "WHERE DOES THE ESPRESSO GO?",
+          image: IMG + "espressopour.png",
           layout: "cards",
           extra: "bloom",
           choices: [
-            { id: "cold-milk", emoji: "🥛", label: { en: "Cold milk", vi: "Sữa lạnh" }, correct: false },
-            { id: "full-kettle", emoji: "🫖", label: { en: "Full kettle of water", vi: "Cả ấm nước" }, correct: false },
-            { id: "splash", emoji: "💧", label: { en: "Small splash of hot water", vi: "Một chút nước nóng" }, correct: true },
-            { id: "condensed", emoji: "🥫", label: { en: "Condensed milk", vi: "Sữa đặc" }, correct: false }
+            { id: "stir-in", emoji: "🥄", label: "Stirred into the water", correct: false },
+            { id: "on-top", emoji: "⬇️", label: "Poured on top of the water", correct: true },
+            { id: "under", emoji: "🥛", label: "Under a layer of milk", correct: false },
+            { id: "side", emoji: "🫗", label: "Served in a separate glass", correct: false }
           ],
           correct: {
-            title: { en: "LET IT BLOOM.", vi: "CHO NÓ NỞ." },
-            body: {
-              en: "A little hot water wets the grounds first and gets them ready for the main brew.\n\nGive it a moment.",
-              vi: "Một chút nước nóng làm ướt bột trước, để cà phê sẵn sàng cho lần đổ chính.\n\nChờ một nhịp."
-            },
-            cta: { en: "POUR IT UP →", vi: "ĐỔ NƯỚC →" }
+            title: "POUR IT OVER.",
+            body: "The double shot goes on top of the hot water.\n\nThat gentle pour keeps the crema from breaking up.",
+            cta: "NEXT: LEAVE IT →"
           },
-          wrongTitle: { en: "NOT QUITE!", vi: "CHƯA ỔN!" },
-          wrongBody: {
-            en: "That one won’t give us the slow, strong phin brew we’re after.",
-            vi: "Cái đó không cho ra ly phin chậm và đậm như mình muốn."
-          }
+          wrongTitle: "NOT QUITE!",
+          wrongBody: "Pour the espresso on top of the water. Stirring it in or hiding it under milk loses the crema."
         },
         {
           id: 4,
           view: "step-4",
-          kicker: { en: "Step 4 — Slow down, ah", vi: "Bước 4 — Từ từ thôi" },
-          title: { en: "THE PHIN IS FULL. NOW WHAT?", vi: "PHIN ĐÃ ĐẦY. GIỜ LÀM GÌ?" },
-          image: IMG + "milkcoffee_4.png",
+          kicker: "Step 4 — Hands off",
+          title: "THE SHOT IS IN. NOW WHAT?",
+          image: IMG + "longblack.png",
           layout: "actions",
           extra: "drip",
           choices: [
-            { id: "press", emoji: "👊", label: { en: "PRESS\nPush the coffee through.", vi: "ẤN\nÉp cà phê chảy xuống." }, correct: false },
-            { id: "stir", emoji: "🥄", label: { en: "STIR\nGive everything a mix.", vi: "KHUẤY\nTrộn tất cả lên." }, correct: false },
-            { id: "wait", emoji: "⏳", label: { en: "WAIT\nLet gravity do its thing.", vi: "CHỜ\nĐể trọng lực làm việc." }, correct: true },
-            { id: "filter", emoji: "📄", label: { en: "FILTER AGAIN\nGrab some filter paper.", vi: "LỌC LẠI\nLấy giấy lọc." }, correct: false }
+            { id: "stir", emoji: "🥄", label: "STIR\nMix the crema through.", correct: false },
+            { id: "milk", emoji: "🥛", label: "ADD MILK\nSoften it up.", correct: false },
+            { id: "wait", emoji: "✨", label: "LEAVE IT\nLet the crema sit.", correct: true },
+            { id: "ice", emoji: "🧊", label: "ADD ICE\nTurn it into an iced latte.", correct: false }
           ],
           correct: {
-            title: { en: "DRIP. DRIP. DRIP.", vi: "NHỎ. NHỎ. NHỎ." },
-            body: {
-              en: "That slow drip is the whole point.\n\nThe phin produces a concentrated coffee strong enough to stand up to condensed milk and ice.",
-              vi: "Cái nhỏ giọt chậm chính là cả bài.\n\nPhin cho ra cà phê đặc, đủ mạnh để đứng vững trước sữa đặc và đá."
-            },
-            cta: { en: "ALMOST THERE →", vi: "SẮP XONG →" }
+            title: "LEAVE THE CREMA.",
+            body: "Do not stir it through. Do not add milk.\n\nThe whole point of water-first is that golden crema on top.",
+            cta: "ALMOST THERE →"
           },
-          wrongTitle: { en: "NOT QUITE!", vi: "CHƯA ỔN!" },
-          wrongBody: {
-            en: "Patience. The phin is not a machine you shove around.",
-            vi: "Kiên nhẫn. Phin không phải máy để mình thúc."
-          }
+          wrongTitle: "NOT QUITE!",
+          wrongBody: "Leave it. Stirring, milk, or ice will undo the long black."
         },
         {
           id: 5,
           view: "step-5",
-          kicker: { en: "Step 5 — Make it iced", vi: "Bước 5 — Cho đá vào" },
-          title: { en: "COFFEE DONE. HOW DO WE FINISH IT?", vi: "CÀ PHÊ XONG. HOÀN THIỆN THẾ NÀO?" },
-          image: IMG + "milkcoffee_5.png",
+          kicker: "Step 5 — Serve it",
+          title: "CUP’S READY. HOW DO WE FINISH?",
+          image: IMG + "longblack.png",
           layout: "beats",
           beats: [
             {
-              title: { en: "MIX IT?", vi: "KHUẤY KHÔNG?" },
+              title: "KEEP THE CREMA?",
               layout: "actions",
               choices: [
-                { id: "stir", emoji: "🥄", label: { en: "STIR", vi: "KHUẤY" }, correct: true },
-                { id: "dont", emoji: "🚫", label: { en: "DON’T STIR", vi: "ĐỪNG KHUẤY" }, correct: false }
+                { id: "keep", emoji: "☕", label: "KEEP IT", correct: true },
+                { id: "skim", emoji: "🚫", label: "SKIM IT OFF", correct: false }
               ],
-              wrongTitle: { en: "NOT QUITE!", vi: "CHƯA ỔN!" },
-              wrongBody: {
-                en: "Give the condensed milk a chance to meet the coffee first.",
-                vi: "Cho sữa đặc gặp cà phê trước đã."
-              }
+              wrongTitle: "NOT QUITE!",
+              wrongBody: "The crema is the finish. Leave it on the cup."
             },
             {
-              title: { en: "WHERE NEXT?", vi: "TIẾP THEO ĐÂU?" },
-              hint: { en: "Tap the glass of ice.", vi: "Chạm vào ly đá." },
+              title: "WHERE NEXT?",
+              hint: "Tap the finished cup.",
               layout: "tap-scene",
-              image: IMG + "milkcoffee_6.png"
+              image: IMG + "longblack.png"
             }
           ],
           correct: {
-            title: { en: "THAT’S THE ONE.", vi: "ĐÚNG LY ĐÓ." },
-            body: {
-              en: "Strong coffee + sweet condensed milk + plenty of ice.\n\nSimple ingredients. Very serious refreshment.",
-              vi: "Cà phê đậm + sữa đặc ngọt + thật nhiều đá.\n\nNguyên liệu đơn giản. Giải khát thì nghiêm túc."
-            },
-            cta: { en: "SERVE IT!", vi: "DỌN RA LY!" }
+            title: "THAT’S THE ONE.",
+            body: "Hot water in the cup first, then a double espresso poured on top.\n\nNo milk. Crema still there. Classic Melbourne.",
+            cta: "SERVE IT!"
           }
         }
       ]
     },
-    trung: {
-      id: "trung",
-      rumKey: "trung",
-      completeImage: IMG + "eggcoffee_6.png",
+    "flat-white": {
+      id: "flat-white",
+      rumKey: "flat-white",
+      completeImage: IMG + "flatwhite.png",
       opening: {
-        kicker: { en: "Vietnamese egg coffee", vi: "Cà phê trứng" },
-        title: { en: "ROUND TWO: THINGS ARE GETTING EGGY", vi: "VÒNG HAI: TỚI LÚC CÓ TRỨNG" },
-        subcopy: {
-          en: "Coffee was easy.\nNow let’s turn an egg yolk into something that tastes suspiciously like dessert.",
-          vi: "Pha cà phê thì dễ.\nGiờ biến lòng đỏ trứng thành thứ nghe như món tráng miệng."
-        },
-        image: IMG + "eggcoffee_6.png",
-        cta: { en: "CRACK ON", vi: "ĐẬP TRỨNG" }
+        kicker: "Melbourne flat white",
+        title: "MAKE A FLAT WHITE",
+        subcopy: "Double shot.\nSilky steamed milk.\nA proper ceramic cup.",
+        image: IMG + "flatwhite.png",
+        cta: "LET’S STEAM"
       },
       result: {
-        kicker: { en: "Served", vi: "Dọn ra ly" },
-        title: { en: "XONG RỒI!", vi: "XONG RỒI!" },
-        subtitle: { en: "CÀ PHÊ TRỨNG: COMPLETE", vi: "CÀ PHÊ TRỨNG: XONG" },
-        body: {
-          en: "Coffee underneath.\nDessert on top.\nVery sensible arrangement.",
-          vi: "Cà phê ở dưới.\nMón ngọt ở trên.\nSắp xếp hợp lý."
-        },
-        brewLine: { en: "Your cup:", vi: "Ly của bạn:" },
+        kicker: "Served",
+        title: "NICE ONE.",
+        subtitle: "FLAT WHITE: COMPLETE",
+        body: "Double espresso, steamed milk with fine microfoam, ceramic cup. Very Melbourne.",
+        brewLine: "Your cup:",
         stars: "★★★★★",
         stats: [
-          { label: { en: "Coffee kick", vi: "Độ cà phê" }, fill: 100 },
-          { label: { en: "Creaminess", vi: "Độ béo" }, fill: 100 },
-          { label: { en: "Dessert energy", vi: "Năng lượng tráng miệng" }, fill: 100 }
+          { label: "Coffee kick", fill: 100 },
+          { label: "Microfoam", fill: 100 },
+          { label: "Balance", fill: 100 }
         ]
       },
       steps: [
         {
           id: 1,
           view: "step-1",
-          kicker: { en: "Step 1 — Start strong", vi: "Bước 1 — Bắt đầu cho đậm" },
-          title: { en: "WHAT’S HIDING UNDER ALL THAT EGG CREAM?", vi: "BÊN DƯỚI LỚP KEM TRỨNG LÀ GÌ?" },
-          image: IMG + "eggcoffee_1.png",
+          kicker: "Step 1 — Start strong",
+          title: "WHAT’S THE COFFEE BASE?",
+          image: IMG + "espresso.png",
           layout: "cards",
           choices: [
-            { id: "vn-coffee", emoji: "☕", label: { en: "Strong Vietnamese coffee", vi: "Cà phê Việt đậm" }, correct: true },
-            { id: "tea", emoji: "🍵", label: { en: "Green tea", vi: "Trà xanh" }, correct: false },
-            { id: "steamed", emoji: "🥛", label: { en: "Steamed milk", vi: "Sữa nóng" }, correct: false },
-            { id: "coconut", emoji: "🥥", label: { en: "Coconut water", vi: "Nước dừa" }, correct: false }
+            { id: "double", emoji: "☕", label: "A double espresso shot", correct: true },
+            { id: "tea", emoji: "🍵", label: "A splash of black tea", correct: false },
+            { id: "drip", emoji: "🫖", label: "Long filter coffee", correct: false },
+            { id: "instant", emoji: "📦", label: "Instant coffee powder", correct: false }
           ],
           correct: {
-            title: { en: "START WITH THE STRONG STUFF.", vi: "BẮT ĐẦU BẰNG THỨ ĐẬM." },
-            body: {
-              en: "Cà phê trứng begins with concentrated coffee.\n\nThat dark coffee gives the sweet egg cream something bold to sit on.",
-              vi: "Cà phê trứng bắt đầu bằng cà phê đặc.\n\nLớp cà phê đậm cho kem trứng ngọt có chỗ để ngồi lên."
-            },
-            cta: { en: "GET CRACKING →", vi: "ĐẬP TRỨNG →" }
+            title: "START WITH A DOUBLE.",
+            body: "A flat white is built on a double espresso shot.\n\nThat concentrated coffee is what the steamed milk has to stand up to.",
+            cta: "STEAM THE MILK →"
           },
-          wrongTitle: { en: "NOT QUITE!", vi: "CHƯA ỔN!" },
-          wrongBody: {
-            en: "Egg cream needs a bold coffee base, not a stand-in.",
-            vi: "Kem trứng cần đế cà phê đậm, không phải đồ thế chỗ."
-          }
+          wrongTitle: "NOT QUITE!",
+          wrongBody: "A flat white needs a double espresso shot — not tea, filter, or instant."
         },
         {
           id: 2,
           view: "step-2",
-          kicker: { en: "Step 2 — Yolk about it", vi: "Bước 2 — Chuyện lòng đỏ" },
-          title: { en: "THE EGG’S CRACKED. WHICH PART ARE WE KEEPING?", vi: "TRỨNG ĐÃ ĐẬP. GIỮ PHẦN NÀO?" },
-          image: IMG + "eggcoffee_2.png",
+          kicker: "Step 2 — Texture the milk",
+          title: "WHAT KIND OF MILK GOES IN?",
+          image: IMG + "steamedmilk.png",
           layout: "cards",
           choices: [
-            { id: "white", emoji: "🤍", label: { en: "Bowl of egg white", vi: "Bát lòng trắng" }, correct: false },
-            { id: "yolk", emoji: "🟡", label: { en: "Golden egg yolk", vi: "Lòng đỏ vàng" }, correct: true },
-            { id: "shell", emoji: "🥚", label: { en: "Eggshell", vi: "Vỏ trứng" }, correct: false },
-            { id: "boiled", emoji: "🍳", label: { en: "Whole boiled egg", vi: "Trứng luộc nguyên" }, correct: false }
+            { id: "cold", emoji: "🧊", label: "Cold milk straight from the fridge", correct: false },
+            { id: "microfoam", emoji: "🥛", label: "Steamed milk with fine microfoam", correct: true },
+            { id: "cream", emoji: "🍦", label: "Whipped cream", correct: false },
+            { id: "bubbles", emoji: "🫧", label: "Big soapy bubbles", correct: false }
           ],
           correct: {
-            title: { en: "YOLK’S ON YOU.", vi: "LÒNG ĐỎ ĐÓ." },
-            body: {
-              en: "The rich yolk is the base of that famous creamy topping.\n\nEgg white can sit this one out.",
-              vi: "Lòng đỏ béo là nền của lớp kem nổi tiếng đó.\n\nLòng trắng ngồi ngoài vòng này."
-            },
-            cta: { en: "MAKE IT SWEET →", vi: "CHO NGỌT VÀO →" }
+            title: "SILKY, NOT SUDSY.",
+            body: "Fine microfoam is the Melbourne signature: steamed milk that looks like wet paint, not a bubble bath.\n\nThat texture sits over the espresso instead of floating as a thick cap.",
+            cta: "PICK A CUP →"
           },
-          wrongTitle: { en: "NOT QUITE!", vi: "CHƯA ỔN!" },
-          wrongBody: {
-            en: "We’re after the golden bit — leave the rest of the egg behind.",
-            vi: "Mình cần phần vàng — phần còn lại để đó."
-          }
+          wrongTitle: "NOT QUITE!",
+          wrongBody: "We want steamed milk with fine microfoam — not cold milk, cream, or huge bubbles."
         },
         {
           id: 3,
           view: "step-3",
-          kicker: { en: "Step 3 — Sweeten the deal", vi: "Bước 3 — Cho ngọt vào" },
-          title: { en: "WHAT JOINS THE YOLK?", vi: "GÌ ĐI CÙNG LÒNG ĐỎ?" },
-          image: IMG + "eggcoffee_3.png",
+          kicker: "Step 3 — The vessel",
+          title: "WHAT DO WE SERVE IT IN?",
+          image: IMG + "flatwhite.png",
           layout: "cards",
           choices: [
-            { id: "condensed", emoji: "🥫", label: { en: "Sweetened condensed milk", vi: "Sữa đặc có đường" }, correct: true },
-            { id: "sparkling", emoji: "🫧", label: { en: "Sparkling water", vi: "Nước có ga" }, correct: false },
-            { id: "soy", emoji: "🧂", label: { en: "Soy sauce", vi: "Nước tương" }, correct: false },
-            { id: "butter", emoji: "🧈", label: { en: "Melted butter", vi: "Bơ tan" }, correct: false }
+            { id: "ceramic", emoji: "☕", label: "A ceramic cup", correct: true },
+            { id: "paper", emoji: "🥤", label: "A tall paper takeaway cup", correct: false },
+            { id: "glass", emoji: "🥛", label: "A tall latte glass", correct: false },
+            { id: "jar", emoji: "🫙", label: "A mason jar", correct: false }
           ],
           correct: {
-            title: { en: "SWEET MOVE.", vi: "NGỌT ĐÚNG LÚC." },
-            body: {
-              en: "Condensed milk gives the mixture sweetness, body and that rich dessert-like character.\n\nNow comes the workout.",
-              vi: "Sữa đặc cho hỗn hợp vị ngọt, độ đặc, và cái chất như món tráng miệng.\n\nGiờ tới phần tập tay."
-            },
-            cta: { en: "WHISK AWAY →", vi: "ĐÁNH KEM →" }
+            title: "CERAMIC. ALWAYS.",
+            body: "A flat white is served in a ceramic cup.\n\nThe smaller cup keeps the ratio tight: espresso plus silky milk, not a giant milky drink.",
+            cta: "CHECK THE FOAM →"
           },
-          wrongTitle: { en: "NOT QUITE!", vi: "CHƯA ỔN!" },
-          wrongBody: {
-            en: "The yolk wants condensed milk — nothing savory, nothing fizzy.",
-            vi: "Lòng đỏ cần sữa đặc — đừng mặn, đừng có ga."
-          }
+          wrongTitle: "NOT QUITE!",
+          wrongBody: "Ceramic cup. A tall glass or takeaway tub turns this into something else."
         },
         {
           id: 4,
           view: "step-4",
-          kicker: { en: "Step 4 — Whip it good", vi: "Bước 4 — Đánh cho bông" },
-          title: { en: "WHEN DO WE STOP WHISKING?", vi: "ĐÁNH ĐẾN KHI NÀO DỪNG?" },
-          image: IMG + "eggcoffee_4.png",
+          kicker: "Step 4 — Read the milk",
+          title: "WHEN IS THE MICROFOAM READY?",
+          image: IMG + "steamedmilk.png",
           layout: "stages",
           choices: [
-            { id: "runny", emoji: "", label: { en: "RUNNY\nDark yellow and thin.", vi: "LOÃNG\nVàng đậm và loãng." }, swatch: "runny", correct: false },
-            { id: "creamy", emoji: "", label: { en: "CREAMY\nLighter but still loose.", vi: "SỆT\nNhạt hơn nhưng vẫn lỏng." }, swatch: "creamy", correct: false },
-            { id: "fluffy", emoji: "", label: { en: "THICK + FLUFFY\nPale, airy, soft peaks.", vi: "DÀY + BÔNG\nNhạt, xốp, đỉnh mềm." }, swatch: "fluffy", correct: true }
+            { id: "runny", emoji: "", label: "THIN\nWarm milk, no texture.", swatch: "runny", correct: false },
+            { id: "creamy", emoji: "", label: "FOAMY\nA thick dry cap on top.", swatch: "creamy", correct: false },
+            { id: "fluffy", emoji: "", label: "SILKY\nFine microfoam, wet paint.", swatch: "fluffy", correct: true }
           ],
           correct: {
-            title: { en: "THERE IT IS.", vi: "ĐÓ RỒI." },
-            body: {
-              en: "Whisking adds air until the yolk and condensed milk become thick, pale and velvety.\n\nThat fluffy texture is what makes egg coffee feel almost like a dessert.",
-              vi: "Đánh kem cho không khí vào đến khi lòng đỏ và sữa đặc đặc, nhạt màu và mượt.\n\nCái xốp đó khiến cà phê trứng gần như món tráng miệng."
-            },
-            cta: { en: "BUILD THE CUP →", vi: "DỰNG LY →" }
+            title: "THERE IT IS.",
+            body: "Fine microfoam looks glossy and pours like wet paint.\n\nThat is what lets the milk and espresso become one drink instead of a cappuccino hat.",
+            cta: "BUILD THE CUP →"
           },
-          wrongTitle: { en: "KEEP GOING!", vi: "ĐÁNH TIẾP!" },
-          wrongBody: {
-            en: "Not there yet — we want pale, airy, and thick enough to sit on the coffee.",
-            vi: "Chưa tới — cần nhạt, xốp, và đặc đủ để ngồi trên cà phê."
-          }
+          wrongTitle: "KEEP GOING!",
+          wrongBody: "Not there yet — we want fine, silky microfoam, not thin milk or a dry foam cap."
         },
         {
           id: 5,
           view: "step-5",
-          kicker: { en: "Step 5 — The grand finale", vi: "Bước 5 — Màn kết" },
-          title: { en: "COFFEE: READY.\nCREAM: READY.\nNOW WHAT?", vi: "CÀ PHÊ: XONG.\nKEM: XONG.\nGIỜ LÀM GÌ?" },
-          image: IMG + "eggcoffee_5.png",
+          kicker: "Step 5 — The pour",
+          title: "ESPRESSO: READY.\nMILK: READY.\nNOW WHAT?",
+          image: IMG + "flatwhite.png",
           layout: "cards",
           choices: [
-            { id: "spoon", emoji: "🥄", label: { en: "Spoon the cream over the coffee", vi: "Múc kem lên cà phê" }, correct: true },
-            { id: "ice", emoji: "🧊", label: { en: "Mix everything with ice", vi: "Trộn tất cả với đá" }, correct: false },
-            { id: "pour-away", emoji: "🫗", label: { en: "Pour the coffee away", vi: "Đổ cà phê đi" }, correct: false },
-            { id: "raw", emoji: "🟡", label: { en: "Drop in a raw yolk", vi: "Thả lòng đỏ sống" }, correct: false }
+            { id: "pour", emoji: "🥛", label: "Pour steamed milk over the espresso", correct: true },
+            { id: "ice", emoji: "🧊", label: "Pour it over ice", correct: false },
+            { id: "dump", emoji: "🫗", label: "Dump the espresso and start again", correct: false },
+            { id: "water", emoji: "💧", label: "Top it up with hot water", correct: false }
           ],
           correct: {
-            title: { en: "LOOK AT THOSE LAYERS.", vi: "NHÌN MẤY LỚP ĐÓ." },
-            body: {
-              en: "Dark Vietnamese coffee underneath.\nThick golden egg cream on top.\n\nSip through both and you get bitter, sweet and creamy in one go.",
-              vi: "Cà phê Việt đậm ở dưới.\nKem trứng vàng dày ở trên.\n\nHút cả hai lớp: đắng, ngọt, béo một lần."
-            },
-            cta: { en: "SERVE IT!", vi: "DỌN RA LY!" }
+            title: "LOOK AT THAT CUP.",
+            body: "Double espresso in a ceramic cup.\nSteamed milk with fine microfoam poured over the top.\n\nThat’s a Melbourne flat white.",
+            cta: "SERVE IT!"
           },
-          wrongTitle: { en: "NOT QUITE!", vi: "CHƯA ỔN!" },
-          wrongBody: {
-            en: "Keep the layers. Spoon the cream onto the coffee — don’t stir it into ice.",
-            vi: "Giữ các lớp. Múc kem lên cà phê — đừng khuấy với đá."
-          }
+          wrongTitle: "NOT QUITE!",
+          wrongBody: "Pour the steamed milk over the espresso. No ice, no extra water, no starting over."
         }
       ]
     }
@@ -379,14 +306,8 @@
   var root = null;
   var onCloseCallback = null;
 
-  function lang() {
-    return localStorage.getItem("ctf_lang") === "en" ? "en" : "vi";
-  }
-
   function tx(value) {
-    if (value == null) return "";
-    if (typeof value === "string") return value;
-    return value[lang()] || value.en || value.vi || "";
+    return value == null ? "" : String(value);
   }
 
   function rum(fn) {
@@ -522,16 +443,6 @@
     return dots;
   }
 
-  function langToggleHtml() {
-    var current = lang();
-    return (
-      '<div class="lang-toggle quiz-lang-toggle" role="group" aria-label="' + esc(tx(CHROME.language)) + '">' +
-        '<button type="button" class="lang-btn' + (current === "vi" ? " is-active" : "") + '" data-quiz-lang="vi">VI</button>' +
-        '<button type="button" class="lang-btn' + (current === "en" ? " is-active" : "") + '" data-quiz-lang="en">EN</button>' +
-      "</div>"
-    );
-  }
-
   function shell(inner) {
     var closeCtl = isPageMode()
       ? '<a class="quiz-close" href="/game" data-dd-action-name="quiz_return_game" aria-label="' + esc(tx(CHROME.close)) + '">×</a>'
@@ -540,7 +451,6 @@
       '<div class="quiz-overlay" role="main" aria-label="' + esc(tx(CHROME.quizLabel)) + '">' +
         '<div class="quiz-shell">' +
           '<div class="quiz-topbar">' +
-            langToggleHtml() +
             '<div class="quiz-progress" aria-hidden="true">' + progressHtml() + "</div>" +
             closeCtl +
           "</div>" +
@@ -691,17 +601,6 @@
         onSceneTap();
       });
     });
-    overlay.querySelectorAll("[data-quiz-lang]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var next = btn.getAttribute("data-quiz-lang");
-        if (typeof global.setLanguage === "function") {
-          global.setLanguage(next);
-        } else {
-          localStorage.setItem("ctf_lang", next === "en" ? "en" : "vi");
-          rerender();
-        }
-      });
-    });
   }
 
   function feedbackHost() {
@@ -823,7 +722,7 @@
       quiz: quiz().rumKey,
       step: step.id,
       beat: state.beatIndex,
-      choice: "ice-glass",
+      choice: "finished-cup",
       correct: true
     });
     finishStep();
@@ -961,11 +860,11 @@
     rerender: rerender,
     isOpen: isOpen,
     playCelebration: playCelebration,
-    ids: { milk: "sua-da", egg: "trung" }
+    ids: { longBlack: "long-black", flatWhite: "flat-white" }
   };
 
   function quizIdFromPath() {
-    var match = window.location.pathname.match(/^\/quiz\/(sua-da|trung)(?:\/|$)/);
+    var match = window.location.pathname.match(/^\/quiz\/(long-black|flat-white)(?:\/|$)/);
     return match ? match[1] : null;
   }
 

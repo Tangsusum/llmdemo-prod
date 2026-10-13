@@ -173,14 +173,6 @@ a.quiz-launch-cta {
   margin-bottom: 0.75rem;
 }
 
-.quiz-lang-toggle {
-  flex-shrink: 0;
-}
-
-.quiz-lang-toggle .lang-btn {
-  padding: 0.3rem 0.7rem;
-}
-
 .quiz-progress {
   display: flex;
   gap: 0.4rem;

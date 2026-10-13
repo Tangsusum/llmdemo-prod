@@ -156,7 +156,7 @@ def _process_ctf_request(msg):
             enhanced_tags["ai_guard.blocked"] = False
 
         msg_lower = msg.lower()
-        if any(term in msg_lower for term in ("coffee", "cà phê", "ca phe", "trứng", "sữa", "egg")):
+        if any(term in msg_lower for term in ("coffee", "flat white", "long black", "melbourne", "milk", "dairy")):
             enhanced_tags["llm.relevant"] = "coffee"
 
         if evaluation["success"]:
