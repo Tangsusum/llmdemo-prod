@@ -4,7 +4,7 @@ Laptop and the live host use the same Datadog identity. Host name may differ; ta
 
 | Surface | apidays Australia 2026 (local and deploy) |
 | --- | --- |
-| RUM app | **Melbourne Coffee Guardrail** (`95ad2a6f-23d2-4f1b-8e44-46f0570d49a4`) |
+| RUM app | **Melbourne Coffee Guardrail** (`c6d36c51-6689-4e5f-9373-21dcaedac6db`) |
 | `service` / `ml_app` | `melbourne-coffee-guardrail` |
 | `env` (APM, RUM, Feature Flags) | `production` |
 | `version` | `1.0.0` |
@@ -24,7 +24,7 @@ Do **not** use the old overlay names `/game/quiz/...`.
 
 ## Datadog UI setup
 
-Frontend application: **Melbourne Coffee Guardrail** (`95ad2a6f-23d2-4f1b-8e44-46f0570d49a4`). RUM `service`, `env`, and `version` come from `DD_SERVICE` / `DD_ENV` / `DD_VERSION` and must match the backend: `melbourne-coffee-guardrail` / `production` / `1.0.0`.
+Frontend application: **Melbourne Coffee Guardrail** (`c6d36c51-6689-4e5f-9373-21dcaedac6db`). RUM `service`, `env`, and `version` come from `DD_SERVICE` / `DD_ENV` / `DD_VERSION` and must match the backend: `melbourne-coffee-guardrail` / `production` / `1.0.0`.
 
 [Step 2](https://docs.datadoghq.com/journey_monitoring/#step-2---specify-journey-details) is only: app → name → **start event(s)** → **end event(s)** → Save. The [map](https://docs.datadoghq.com/journey_monitoring/map/) nodes are **pages or journeys**. Two journeys get a connecting line only when they share a **view** (the end of one is the start of the next). Actions do not create map edges. [Variants](https://docs.datadoghq.com/journey_monitoring/details_report/variants/) are a filter on steps *inside* one journey; they never link two journeys.
 
@@ -105,7 +105,7 @@ Leave RUM collection on if you want Journey Monitoring to see the synthetic path
 
 ## Dashboard and Explorer queries
 
-Filter every query with `@application.id:95ad2a6f-23d2-4f1b-8e44-46f0570d49a4 @session.type:user env:production`.
+Filter every query with `@application.id:c6d36c51-6689-4e5f-9373-21dcaedac6db @session.type:user env:production`.
 
 ### Winners
 
