@@ -169,11 +169,17 @@ deploy_vm() {
     return 1
   fi
 
-  # A present-but-blank DD_API_KEY/DD_APP_KEY passes the check above yet
-  # silently disables AI Guard (it fails closed with just a log warning, so
-  # the app boots and passes health checks either way) — check the values too.
+  # A present-but-blank value passes the check above but still breaks the app:
+  #  - OPENAI_API_KEY is fatal. src/config.py builds the OpenAI client at
+  #    import time, so a blank key raises OpenAIError and the container
+  #    crash-loops; it never serves a health check.
+  #  - DD_API_KEY/DD_APP_KEY are silent. LLMObs.enable() is wrapped in
+  #    try/except, so the app boots and passes health checks while losing
+  #    Prompt Management, and AI Guard fails OPEN (warning only, no block).
+  # Note src/config.py calls load_dotenv(override=True), so a bare `KEY=`
+  # line here also clobbers anything exported in the environment.
   local missing_keys
-  missing_keys=$(on_vm "$vm" "grep -qE '^DD_API_KEY=.+' \"\$HOME/$PROJECT_DIR/.env\" || echo DD_API_KEY; grep -qE '^DD_APP_KEY=.+' \"\$HOME/$PROJECT_DIR/.env\" || echo DD_APP_KEY")
+  missing_keys=$(on_vm "$vm" "grep -qE '^OPENAI_API_KEY=.+' \"\$HOME/$PROJECT_DIR/.env\" || echo OPENAI_API_KEY; grep -qE '^DD_API_KEY=.+' \"\$HOME/$PROJECT_DIR/.env\" || echo DD_API_KEY; grep -qE '^DD_APP_KEY=.+' \"\$HOME/$PROJECT_DIR/.env\" || echo DD_APP_KEY")
   if [[ -n "$missing_keys" ]]; then
     fail "$vm: ~/$PROJECT_DIR/.env is missing or has a blank value for: $(echo "$missing_keys" | tr '\n' ' ')"
     return 1
